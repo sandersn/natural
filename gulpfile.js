@@ -3,7 +3,16 @@ var ts = require("gulp-typescript");
 var tsProject = ts.createProject("tsconfig.json");
 var jasmine = require('gulp-jasmine-node');
 
-gulp.task("default", function () {
+gulp.task("copy-json", function() {
+    return gulp.src("src/**/*json", { base: 'src' }).pipe(gulp.dest("lib"));
+});
+gulp.task("copy-txt", function() {
+    return gulp.src("src/**/*txt", { base: 'src' }).pipe(gulp.dest("lib"));
+});
+gulp.task("copy-jg", function() {
+    return gulp.src("src/**/*jg", { base: 'src' }).pipe(gulp.dest("lib"));
+});
+gulp.task("default", ["copy-json", "copy-txt", "copy-jg"], function () {
     return tsProject.src()
         .pipe(tsProject())
         .js.pipe(gulp.dest("lib/natural"));

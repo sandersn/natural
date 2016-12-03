@@ -6,8 +6,8 @@ var jasmine = require('gulp-jasmine');
 gulp.task("default", function () {
     return tsProject.src()
         .pipe(tsProject())
-        .js.pipe(gulp.dest("lib"));
+        .js.pipe(gulp.dest("lib/natural"));
 });
 gulp.task("test", ["default"], function () {
-    gulp.src("out/**/test.js").pipe(jasmine())
+    return gulp.src("spec/*js").pipe(jasmine({ verbose: true}))
 });

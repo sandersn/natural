@@ -1,7 +1,7 @@
 var gulp = require("gulp");
 var ts = require("gulp-typescript");
 var tsProject = ts.createProject("tsconfig.json");
-var jasmine = require('gulp-jasmine');
+var jasmine = require('gulp-jasmine-node');
 
 gulp.task("default", function () {
     return tsProject.src()
@@ -9,5 +9,5 @@ gulp.task("default", function () {
         .js.pipe(gulp.dest("lib/natural"));
 });
 gulp.task("test", ["default"], function () {
-    return gulp.src("spec/*js").pipe(jasmine({ verbose: true}))
+    return gulp.src(["spec/*js"]).pipe(jasmine({ verbose: false, timeout: 10000, color: true }))
 });

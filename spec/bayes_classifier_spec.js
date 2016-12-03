@@ -153,7 +153,7 @@ describe('bayes classifier', function() {
 		      expect(newClassifier.classify('a bug in the code')).toBe('computing');
 		      expect(newClassifier.classify('read all the books')).toBe('literature');
 		      expect(newClassifier.classify('kick butt')).toBe('sports');
-		      asyncSpecDone();
+		      jasmine.asyncSpecDone();
 		  });
             });
 	});
@@ -162,7 +162,7 @@ describe('bayes classifier', function() {
             natural.BayesClassifier.load('nonexistant_bayes_classifier.json', null, function(err, newClassifier){
               expect(err.code).toBe('ENOENT');
               expect(newClassifier).toBe(undefined);
-              asyncSpecDone();
+              jasmine.asyncSpecDone();
             });
         });
 

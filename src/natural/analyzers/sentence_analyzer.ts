@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var _ = require("underscore")._;
+import _ = require("underscore");
 
 /*
  Sentences Analizer Class
@@ -157,7 +157,6 @@ Sentences.prototype.type = function(callback) {
         } else {
             this.senType = "UNKNOWN";
         }
-            
     } else {
         switch(lastElement.token) {
             case "?": this.senType = "INTERROGATIVE"; break;
@@ -165,7 +164,6 @@ Sentences.prototype.type = function(callback) {
             case ".": this.senType = (implicitYou) ? "COMMAND":"DECLARATIVE";	break;
         }
     }
-    
     if (callback && _(callback).isFunction()) {
         callback(this);
     } else {
@@ -173,4 +171,4 @@ Sentences.prototype.type = function(callback) {
     }
 };
 
-module.exports = Sentences;
+export = Sentences;

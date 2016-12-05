@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var log4js = require('log4js');
+import log4js = require('log4js');
 var logger = log4js.getLogger();
 logger.setLevel('WARN');
 
@@ -103,12 +103,12 @@ function isNumeric(num) {
 }
 
 function current_word_is_number(tagged_sentence, i, parameter) {
-  var is_number = isNumeric(tagged_sentence[i][0]);
-  // Attempt to parse it as a float
-  if (!is_number) {
-    is_number = parseFloat(tagged_sentence[i][0]);
-  }
-  return((parameter === "YES") ? is_number : !is_number);
+    var is_number: number | boolean = isNumeric(tagged_sentence[i][0]);
+    // Attempt to parse it as a float
+    if (!is_number) {
+        is_number = parseFloat(tagged_sentence[i][0]);
+    }
+    return((parameter === "YES") ? is_number : !is_number);
 }
 
 // Checks if the current word is a url
@@ -255,8 +255,8 @@ function prev_bigram_is(tagged_sentence, i, parameter1, parameter2) {
 }
 
 function next_1_or_2_word_is(tagged_sentence, i, parameter1, parameter2) {
-  next_1 = false;
-  next_2 = false;
+  var next_1 = false;
+  var next_2 = false;
   if (i < tagged_sentence.length - 1) {
     next_1 = (tagged_sentence[i+1][0] === parameter1);
   }
@@ -407,4 +407,4 @@ Predicate.prototype.evaluate = function(tagged_sentence, position) {
   return(this.function(tagged_sentence, position, this.parameter1, this.parameter2));
 };
 
-module.exports = Predicate;
+export = Predicate;

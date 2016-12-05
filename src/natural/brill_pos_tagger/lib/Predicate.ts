@@ -388,23 +388,30 @@ function default_transformation_rule (tagged_sentence, i, parameter) {
   return(false);
 }
 
-function Predicate(name, parameter1, parameter2) {
-  this.name = name;
-  this.parameter1 = parameter1;
-  if (parameter2) {
-    this.parameter2 = parameter2;
-  }
-  this.function = predicates[name];
-  if (!this.function) {
-    this.predicate = default_transformation_rule;
-    logger.warn('Predicate constructor: predicate not found: ' + name + '; using default');
-  }
-  logger.debug(this.name);
-  logger.debug(this.function);
-}
+class Predicate {
+    name: string;
+    parameter1;
+    parameter2;
+    function: (tagged_sentence, i, parameter1, parameter2) => boolean;
+    predicate: (tagged_sentence, i, parameter1) => boolean;
+    constructor(name, parameter1, parameter2?) {
+        this.name = name;
+        this.parameter1 = parameter1;
+        if (parameter2) {
+            this.parameter2 = parameter2;
+        }
+        this.function = predicates[name];
+        if (!this.function) {
+            this.predicate = default_transformation_rule;
+            logger.warn('Predicate constructor: predicate not found: ' + name + '; using default');
+        }
+        logger.debug(this.name);
+        logger.debug(this.function.toString());
+    }
 
-Predicate.prototype.evaluate = function(tagged_sentence, position) {
-  return(this.function(tagged_sentence, position, this.parameter1, this.parameter2));
-};
+    evaluate(tagged_sentence, position) {
+        return(this.function(tagged_sentence, position, this.parameter1, this.parameter2));
+    }
+}
 
 export = Predicate;

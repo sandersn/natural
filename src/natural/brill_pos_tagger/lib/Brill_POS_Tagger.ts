@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var log4js = require('log4js');
+import log4js = require('log4js');
 var logger = log4js.getLogger();
 
-var fs = require("fs");
+import fs = require("fs");
 
-var TF_Parser = require('./TF_Parser');
+import TF_Parser = require('./TF_Parser');
 
 logger.setLevel('WARN');
 
@@ -53,4 +53,4 @@ function Brill_POS_Tagger(lexicon, ruleSet) {
   this.ruleSet = ruleSet;
 }
 
-module.exports = Brill_POS_Tagger;
+export = Brill_POS_Tagger;

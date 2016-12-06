@@ -16,10 +16,10 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var log4js = require('log4js');
+import log4js = require('log4js');
 var logger = log4js.getLogger();
-var fs = require("fs");
-var TF_Parser = require('./TF_Parser');
+import fs = require("fs");
+import TF_Parser = require('./TF_Parser');
 
 function RuleSet(filename) {
   var that = this;
@@ -36,4 +36,4 @@ function RuleSet(filename) {
   }
 }
 
-module.exports = RuleSet;
+export = RuleSet;

@@ -16,10 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var log4js = require('log4js');
+import log4js = require('log4js');
 var logger = log4js.getLogger();
 
-var Predicate = require("./Predicate");
+import Predicate = require("./Predicate");
 
 logger.setLevel('ERROR');
 
@@ -45,5 +45,5 @@ TransformationRule.prototype.apply = function(tagged_sentence, position) {
   }
 };
 
-module.exports = TransformationRule;
+export = TransformationRule;
   

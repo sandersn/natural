@@ -1,6 +1,5 @@
 /*
-Copyright (c) 2011, Chris Umbel
-Farsi Stemmer by Fardin Koochaki <me@fardinak.com>
+Copyright (c) 2012, David Przybilla, Chris Umbel
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var stopwords = require('../util/stopwords_fa');
-var Tokenizer = require('../tokenizers/aggressive_tokenizer_fa');
+import stopwords = require('../util/stopwords_es');
+import Tokenizer = require('../tokenizers/aggressive_tokenizer_es');
 
-module.exports = function() {
+export = function() {
     var stemmer = this;
 
     stemmer.stem = function(token) {
@@ -33,21 +32,26 @@ module.exports = function() {
 
     stemmer.tokenizeAndStem = function(text, keepStops) {
         var stemmedTokens = [];
-        
+
         new Tokenizer().tokenize(text).forEach(function(token) {
-            if(keepStops || stopwords.words.indexOf(token) == -1)
-                stemmedTokens.push(stemmer.stem(token));
+            if (keepStops || stopwords.words.indexOf(token) == -1) {
+                var resultToken = token.toLowerCase();
+                if (resultToken.match(new RegExp('[a-záéíóúüñ0-9]+', 'gi'))) {
+                    resultToken = stemmer.stem(resultToken);
+                }
+                stemmedTokens.push(resultToken);
+            }
         });
-        
+
         return stemmedTokens;
     };
 
     stemmer.attach = function() {
-        String.prototype.stem = function() {
+        (String.prototype as any).stem = function() {
             return stemmer.stem(this);
         };
-        
-        String.prototype.tokenizeAndStem = function(keepStops) {
+
+        (String.prototype as any).tokenizeAndStem = function(keepStops) {
             return stemmer.tokenizeAndStem(this, keepStops);
         };
     };

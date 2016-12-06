@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014, Kristoffer Brabrand
+Copyright (c) 2011, Chris Umbel
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var stopwords = require('../util/stopwords_no');
-var Tokenizer = require('../tokenizers/aggressive_tokenizer_no');
+import stopwords = require('../util/stopwords');
+import Tokenizer = require('../tokenizers/aggressive_tokenizer');
 
-module.exports = function() {
+export = function() {
     var stemmer = this;
 
     stemmer.stem = function(token) {
@@ -38,23 +38,48 @@ module.exports = function() {
         stopwords.words = stopwords.words.concat(moreStopWords);
     };
 
+    stemmer.removeStopWord = function(stopWord) {
+        this.removeStopWords([stopWord])
+    };
+
+    stemmer.removeStopWords = function(moreStopWords) {
+        moreStopWords.forEach(function(stopWord){
+            var idx = stopwords.words.indexOf(stopWord);
+            if (idx >= 0) {
+                stopwords.words.splice(idx, 1);
+            }
+        });
+
+    };
+
+
     stemmer.tokenizeAndStem = function(text, keepStops) {
         var stemmedTokens = [];
+        var lowercaseText = text.toLowerCase();
+        var tokens = new Tokenizer().tokenize(lowercaseText);
 
-        new Tokenizer().tokenize(text).forEach(function(token) {
-            if(keepStops || stopwords.words.indexOf(token.toLowerCase()) == -1)
+        if (keepStops) {
+            tokens.forEach(function(token) {
                 stemmedTokens.push(stemmer.stem(token));
-        });
+            });
+        }
+
+        else {
+            tokens.forEach(function(token) {
+                if (stopwords.words.indexOf(token) == -1)
+                    stemmedTokens.push(stemmer.stem(token));
+            });
+        }
 
         return stemmedTokens;
     };
 
     stemmer.attach = function() {
-        String.prototype.stem = function() {
+        (String.prototype as any).stem = function() {
             return stemmer.stem(this);
         };
 
-        String.prototype.tokenizeAndStem = function(keepStops) {
+        (String.prototype as any).tokenizeAndStem = function(keepStops) {
             return stemmer.tokenizeAndStem(this, keepStops);
         };
     };

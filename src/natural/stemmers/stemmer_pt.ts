@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2012, David Przybilla, Chris Umbel
+Copyright (c) 2014, Ismaël Héry
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,39 +20,46 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var stopwords = require('../util/stopwords_es');
-var Tokenizer = require('../tokenizers/aggressive_tokenizer_es');
+import stopwords = require('../util/stopwords_pt');
+import Tokenizer = require('../tokenizers/aggressive_tokenizer_pt');
+export = function () {
+    'use strict';
 
-module.exports = function() {
-    var stemmer = this;
+    var Stemmer = this;
 
-    stemmer.stem = function(token) {
+    Stemmer.stem = function (token) {
         return token;
     };
 
-    stemmer.tokenizeAndStem = function(text, keepStops) {
+    Stemmer.addStopWords = function (word) {
+        stopwords.words.push(word);
+    };
+
+    Stemmer.addStopWords = function (words) {
+        stopwords.words = stopwords.words.concat(words);
+    };
+
+    Stemmer.tokenizeAndStem = function(text, keepStops) {
         var stemmedTokens = [];
-        
-        new Tokenizer().tokenize(text).forEach(function(token) {
-            if (keepStops || stopwords.words.indexOf(token) == -1) {
-                var resultToken = token.toLowerCase();
-                if (resultToken.match(new RegExp('[a-záéíóúüñ0-9]+', 'gi'))) {
-                    resultToken = stemmer.stem(resultToken);
-                }
-                stemmedTokens.push(resultToken);
+
+        var tokenStemmer = function (token) {
+            if (keepStops || stopwords.words.indexOf(token.toLowerCase()) === -1) {
+                stemmedTokens.push(Stemmer.stem(token));
             }
-        });
-        
+        };
+
+        new Tokenizer().tokenize(text).forEach(tokenStemmer);
+
         return stemmedTokens;
     };
 
-    stemmer.attach = function() {
-        String.prototype.stem = function() {
-            return stemmer.stem(this);
+    Stemmer.attach = function () {
+        (String.prototype as any).stem = function () {
+            return Stemmer.stem(this);
         };
-        
-        String.prototype.tokenizeAndStem = function(keepStops) {
-            return stemmer.tokenizeAndStem(this, keepStops);
+
+        (String.prototype as any).tokenizeAndStem = function (keepStops) {
+            return Stemmer.tokenizeAndStem(this, keepStops);
         };
     };
-}
+};

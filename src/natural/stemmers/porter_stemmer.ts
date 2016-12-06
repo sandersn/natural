@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Stemmer = require('./stemmer');
+import Stemmer = require('./stemmer');
 
 // denote groups of consecutive consonants with a C and consecutive vowels
 // with a V.
@@ -50,14 +50,14 @@ function endsWithDoublCons(token) {
 // replace a pattern in a word. if a replacement occurs an optional callback
 // can be called to post-process the result. if no match is made NULL is
 // returned.
-function attemptReplace(token, pattern, replacement, callback) {
+function attemptReplace(token, pattern, replacement, callback?) {
     var result = null;
-    
+
     if((typeof pattern == 'string') && token.substr(0 - pattern.length) == pattern)
         result = token.replace(new RegExp(pattern + '$'), replacement);
     else if((pattern instanceof RegExp) && token.match(pattern))
         result = token.replace(pattern, replacement);
-        
+
     if(result && callback)
         return callback(result);
     else
@@ -66,7 +66,7 @@ function attemptReplace(token, pattern, replacement, callback) {
 
 // attempt to replace a list of patterns/replacements on a token for a minimum
 // measure M.
-function attemptReplacePatterns(token, replacements, measureThreshold) {
+function attemptReplacePatterns(token, replacements, measureThreshold = null) {
     var replacement = token;
 
     for(var i = 0; i < replacements.length; i++) {   

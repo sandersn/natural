@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Stemmer = require('./stemmer_it');
+import Stemmer = require('./stemmer_it');
 
 var PorterStemmer = new Stemmer();
-module.exports = PorterStemmer;
+export = PorterStemmer;
 
 
 function isVowel(letter){
@@ -43,10 +43,10 @@ function getNextVowelPos(token,start){
 };
 
 function getNextConsonantPos(token,start){
-	length=token.length
-			for (var i = start; i < length; i++)
-				if (!isVowel(token[i])) return i;
-			return length;
+    var length=token.length
+    for (var i = start; i < length; i++)
+        if (!isVowel(token[i])) return i;
+    return length;
 };
 
 
@@ -74,14 +74,14 @@ function replaceAcute(token) {
 function vowelMarking(token) {
 	function replacer(match, p1, p2, p3){
   		return p1+p2.toUpperCase()+p3;
-	};	
-	str=token.replace(/([aeiou])(i|u)([aeiou])/g, replacer);	
+	};
+	var str=token.replace(/([aeiou])(i|u)([aeiou])/g, replacer);
 	return str;
 }
 
 
 // perform full stemming algorithm on a single word
-PorterStemmer.stem = function(token) {
+PorterStemmer.stem = function(token: string) {
 	
 	token = token.toLowerCase();
 	token = replaceAcute(token);
@@ -92,6 +92,9 @@ PorterStemmer.stem = function(token) {
 		return token;
 	}
 
+    var r2: number;
+    var rv: number;
+    var len: number;
 	var r1 = r2 = rv = len = token.length;
 	// R1 is the region after the first non-vowel following a vowel, 
 	for(var i=0; i < token.length-1 && r1==len;i++){

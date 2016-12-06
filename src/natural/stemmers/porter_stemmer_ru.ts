@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Stemmer = require('./stemmer_ru');
+import Stemmer = require('./stemmer_ru');
 
 var PorterStemmer = new Stemmer();
 module.exports = PorterStemmer;
@@ -110,8 +110,8 @@ function derivational (token) {
 PorterStemmer.stem = function(token) {
 	token = token.toLowerCase().replace(/ё/g, 'е');
 	var volwesRegexp = /^(.*?[аеиоюяуыиэ])(.*)$/g;
-	var RV = volwesRegexp.exec(token);
-	if (!RV || RV.length < 3) {
+        var RV: string | RegExpExecArray = volwesRegexp.exec(token);
+        if (!RV || RV.length < 3) {
 		return token;
 	}
 	var head = RV[1];

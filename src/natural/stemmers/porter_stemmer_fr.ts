@@ -27,10 +27,10 @@ THE SOFTWARE.
  * http://snowball.tartarus.org/algorithms/french/stemmer.html
  */
 
-var Stemmer = require('./stemmer_fr');
+import Stemmer = require('./stemmer_fr');
 
 var PorterStemmer = new Stemmer();
-module.exports = PorterStemmer;
+export = PorterStemmer;
 
 // Export
 PorterStemmer.stem = stem;
@@ -272,8 +272,8 @@ function stem(token) {
  * @return {Object}       Regions r1, r2, rv as offsets from the begining of the word
  */
 function regions(token) {
-  var r1, r2, rv, len;
-  var i;
+    var r1, r2, rv, len;
+    var i: number;
 
   r1 = r2 = rv = len = token.length;
 

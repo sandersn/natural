@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var stopwords = require('../util/stopwords_pl');
-var Tokenizer = require('../tokenizers/aggressive_tokenizer_pl');
+import stopwords = require('../util/stopwords_pl');
+import Tokenizer = require('../tokenizers/aggressive_tokenizer_pl');
 
-module.exports = function() {
+export = function() {
     var stemmer = this;
 
     stemmer.stem = function(token) {
@@ -47,11 +47,11 @@ module.exports = function() {
     };
 
     stemmer.attach = function() {
-        String.prototype.stem = function() {
+        (String.prototype as any).stem = function() {
             return stemmer.stem(this);
         };
 
-        String.prototype.tokenizeAndStem = function(keepStops) {
+        (String.prototype as any).tokenizeAndStem = function(keepStops) {
             return stemmer.tokenizeAndStem(this, keepStops);
         };
     };

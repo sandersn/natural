@@ -1,7 +1,7 @@
-var stopwords = require('../util/stopwords_it');
-var Tokenizer = require('../tokenizers/aggressive_tokenizer_it');
+import stopwords = require('../util/stopwords_it');
+import Tokenizer = require('../tokenizers/aggressive_tokenizer_it');
 
-module.exports = function() {
+export = function() {
     var stemmer = this;
 
     stemmer.stem = function(token) {
@@ -25,11 +25,11 @@ module.exports = function() {
     };
 
     stemmer.attach = function() {
-        String.prototype.stem = function() {
+        (String.prototype as any).stem = function() {
             return stemmer.stem(this);
         };
         
-        String.prototype.tokenizeAndStem = function(keepStops) {
+        (String.prototype as any).tokenizeAndStem = function(keepStops) {
             return stemmer.tokenizeAndStem(this, keepStops);
         };
     };

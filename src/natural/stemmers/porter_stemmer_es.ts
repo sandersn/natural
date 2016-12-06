@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Stemmer = require('./stemmer_es');
+import Stemmer = require('./stemmer_es');
 
 var PorterStemmer = new Stemmer();
 module.exports = PorterStemmer;
@@ -75,17 +75,17 @@ PorterStemmer.stem = function(token) {
 		return token;
 	}
 
-	var r1,r2,rv,len= token.length;
+        var r1: number;
+        var r2,rv,len= token.length;
 	//looking for regions after vowels
 
-	for(var i=0; i< token.length-1 && r1==len;i++){
+        for(var i = 0; i< token.length-1 && r1==len;i++){
  		if(isVowel(token[i]) && !isVowel(token[i+1]) ){
  			r1=i+2;
  		}
-
 	}
 
-	for(var i=r1; i< token.length-1 && r2==len;i++){
+        for(var i = r1; i< token.length-1 && r2==len;i++){
 		if(isVowel(token[i]) && !isVowel(token[i+1])){
 			r2=i+2;
 		}

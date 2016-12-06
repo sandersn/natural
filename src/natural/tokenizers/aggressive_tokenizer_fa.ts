@@ -40,4 +40,6 @@ class AggressiveTokenizer extends Tokenizer {
 
 }
 
+export = AggressiveTokenizer;
+
 

@@ -20,20 +20,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Tokenizer = require('./tokenizer'),
-    normalizer = require('../normalizers/normalizer_no'),
-    util = require('util');
+import Tokenizer = require("./tokenizer");
+import normalizer = require('../normalizers/normalizer_no');
 
-var AggressiveTokenizer = function() {
-    Tokenizer.call(this);
-};
-util.inherits(AggressiveTokenizer, Tokenizer);
+class AggressiveTokenizer extends Tokenizer {
+    tokenize(text) {
+        text = normalizer.remove_diacritics(text);
 
-module.exports = AggressiveTokenizer;
+        // break a string up into an array of tokens by anything non-word
+        return this.trim(text.split(/[^A-Za-z0-9_æøåÆØÅäÄöÖüÜ]+/));
+    }
+}
 
-AggressiveTokenizer.prototype.tokenize = function(text) {
-    text = normalizer.remove_diacritics(text);
+export = AggressiveTokenizer;
 
-    // break a string up into an array of tokens by anything non-word
-    return this.trim(text.split(/[^A-Za-z0-9_æøåÆØÅäÄöÖüÜ]+/));
-};

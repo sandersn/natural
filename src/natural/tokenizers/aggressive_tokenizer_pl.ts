@@ -20,26 +20,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Tokenizer = require('./tokenizer'),
-    util = require('util');
+import Tokenizer = require("./tokenizer");
 
-var AggressiveTokenizer = function() {
-    Tokenizer.call(this);
-};
+class AggressiveTokenizer extends Tokenizer {
+    withoutEmpty(array) {
+        return array.filter(a => a);
+    }
 
-util.inherits(AggressiveTokenizer, Tokenizer);
+    clearText(text) {
+        return text.replace(/[^a-zążśźęćńół0-9]/gi, ' ').replace(/[\s\n]+/g, ' ').trim();
+    }
 
-module.exports = AggressiveTokenizer;
+    tokenize(text) {
+        // break a string up into an array of tokens by anything non-word
+        return this.withoutEmpty(this.clearText(text).split(' '));
+    }
+}
 
-AggressiveTokenizer.prototype.withoutEmpty = function(array) {
-	return array.filter(function(a) {return a;});
-};
-
-AggressiveTokenizer.prototype.clearText = function(text) {
-	return text.replace(/[^a-zążśźęćńół0-9]/gi, ' ').replace(/[\s\n]+/g, ' ').trim();
-};
-
-AggressiveTokenizer.prototype.tokenize = function(text) {
-    // break a string up into an array of tokens by anything non-word
-    return this.withoutEmpty(this.clearText(text).split(' '));
-};
+export = AggressiveTokenizer;

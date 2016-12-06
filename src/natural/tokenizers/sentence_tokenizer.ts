@@ -20,22 +20,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Tokenizer = require('./tokenizer'),
-    util = require('util');
+import Tokenizer = require('./tokenizer');
 
-var SentenceTokenizer = function() {
-    Tokenizer.call(this);
-};
-util.inherits(SentenceTokenizer, Tokenizer);
+class SentenceTokenizer extends Tokenizer {
+    tokenize(text) {
+        // break string up in to sentences based on punctation and quotation marks
+        var tokens = text.match(/([\"\'\‘\“\'\"\[\(\{\⟨][^\.\?\!]+[\.\?\!][\"\'\’\”\'\"\]\)\}\⟩]|[^\.\?\!]+[\.\?\!])\s?/g);
 
-SentenceTokenizer.prototype.tokenize = function(text) {
-    // break string up in to sentences based on punctation and quotation marks
-    var tokens = text.match(/([\"\'\‘\“\'\"\[\(\{\⟨][^\.\?\!]+[\.\?\!][\"\'\’\”\'\"\]\)\}\⟩]|[^\.\?\!]+[\.\?\!])\s?/g);
+        // remove unecessary white space
+        tokens = tokens.map(Function.prototype.call, String.prototype.trim);
 
-    // remove unecessary white space
-    tokens = tokens.map(Function.prototype.call, String.prototype.trim);
+        return this.trim(tokens);
+    }
+}
 
-    return this.trim(tokens);
-};
-
-module.exports = SentenceTokenizer;
+export = SentenceTokenizer;

@@ -20,9 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Tokenizer = require('./tokenizer'),
-    util = require("util"),
-    _ = require('underscore')._;
+import Tokenizer = require('./tokenizer');
+import _ = require('underscore');
 
 var contractions2 = [
     /(.)('ll|'re|'ve|n't|'s|'m|'d)\b/ig,
@@ -33,7 +32,7 @@ var contractions2 = [
     /\b(Got)(ta)\b/ig,
     /\b(Lem)(me)\b/ig,
     /\b(Mor)('n)\b/ig,
-    /\b(T)(is)\b/ig,
+    /\b(T)(is)\b/ig, 
     /\b(T)(was)\b/ig,
     /\b(Wan)(na)\b/ig];
 
@@ -42,33 +41,30 @@ var contractions3 = [
     /\b(Wha)(t)(cha)\b/ig
 ];
 
-var TreebankWordTokenizer = function() {
-};
+class TreebankWordTokenizer extends Tokenizer {
+    tokenize(text) {
+        contractions2.forEach(function(regexp) {
+            text = text.replace(regexp,"$1 $2");
+        });
 
-util.inherits(TreebankWordTokenizer, Tokenizer);
+        contractions3.forEach(function(regexp) {
+            text = text.replace(regexp,"$1 $2 $3");
+        });
 
-TreebankWordTokenizer.prototype.tokenize = function(text) {
-    contractions2.forEach(function(regexp) {
-	text = text.replace(regexp,"$1 $2");
-    });
-    
-    contractions3.forEach(function(regexp) {
-	text = text.replace(regexp,"$1 $2 $3");
-    });
+        // most punctuation
+        text = text.replace(/([^\w\.\'\-\/\+\<\>,&])/g, " $1 ");
 
-    // most punctuation
-    text = text.replace(/([^\w\.\'\-\/\+\<\>,&])/g, " $1 ");
+        // commas if followed by space
+        text = text.replace(/(,\s)/g, " $1");
 
-    // commas if followed by space
-    text = text.replace(/(,\s)/g, " $1");
+        // single quotes if followed by a space
+        text = text.replace(/('\s)/g, " $1");
 
-    // single quotes if followed by a space
-    text = text.replace(/('\s)/g, " $1");
+        // periods before newline or end of string
+        text = text.replace(/\. *(\n|$)/g, " . ");
 
-    // periods before newline or end of string
-    text = text.replace(/\. *(\n|$)/g, " . ");
-    
-    return  _.without(text.split(/\s+/), '');	
-};
+        return  _.without(text.split(/\s+/), '');	
+    }
+}
 
-module.exports = TreebankWordTokenizer;
+export = TreebankWordTokenizer;

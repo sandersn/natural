@@ -24,28 +24,27 @@ THE SOFTWARE.
  * \@todo Use .bind() in Tokenizer.prototype.attach().
  */
 
-var Tokenizer = function() {
-};
+class Tokenizer {
+    trim(array) {
+        while (array[array.length - 1] == '')
+            array.pop();
 
-Tokenizer.prototype.trim = function(array) {
-  while (array[array.length - 1] == '')
-    array.pop();
+        while (array[0] == '')
+            array.shift();
 
-  while (array[0] == '')
-    array.shift();
+        return array;
+    }
 
-  return array;
-};
+    // Expose an attach function that will patch String with new methods.
+    attach() {
+        var self = this;
 
-// Expose an attach function that will patch String with new methods.
-Tokenizer.prototype.attach = function() {
-  var self = this;
+        (String.prototype as any).tokenize = function() {
+            return self.tokenize(this);
+        }
+    }
 
-  String.prototype.tokenize = function() {
-    return self.tokenize(this);
-  }
-};
+    tokenize(text, preserveApostrophe?) {}
+}
 
-Tokenizer.prototype.tokenize = function() {};
-
-module.exports = Tokenizer;
+export = Tokenizer;

@@ -20,39 +20,40 @@
  THE SOFTWARE.
  */
 
-var Tokenizer = require('./tokenizer'),
-  util = require('util'),
-  CaseTokenizer = function() {
-    Tokenizer.call(this);
-  };
-
-util.inherits(CaseTokenizer, Tokenizer);
-
-CaseTokenizer.prototype.attach = function() {
-  var self = this;
-
-  String.prototype.tokenize = function(preserveApostrophe) {
-    return self.tokenize(this, preserveApostrophe);
-  }
-};
-
-// Idea from Seagull: http://stackoverflow.com/a/26482650
-CaseTokenizer.prototype.tokenize = function(text, preserveApostrophe) {
-  var whitelist = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-  var lower = text.toLowerCase();
-  var upper = text.toUpperCase();
-  var result = '';
-  var i;
-
-  for (i = 0; i < lower.length; ++i) {
-    if (lower[i] !== upper[i] || whitelist.indexOf(lower[i]) > -1 || (text[i] === '\'' && preserveApostrophe)) {
-      result += text[i];
-    } else {
-      result += ' ';
+import Tokenizer = require('./tokenizer');
+import util = require('util');
+class CaseTokenizer extends Tokenizer {
+    constructor() {
+        super();
+        Tokenizer.call(this);
     }
-  }
 
-  return this.trim(result.replace(/\s+/g, ' ').split(' '));
-};
+    attach() {
+        var self = this;
 
-module.exports = CaseTokenizer;
+        (String.prototype as any).tokenize = function(preserveApostrophe) {
+            return self.tokenize(this, preserveApostrophe);
+        }
+    }
+
+    // Idea from Seagull: http://stackoverflow.com/a/26482650
+    tokenize (text, preserveApostrophe) {
+        var whitelist = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        var lower = text.toLowerCase();
+        var upper = text.toUpperCase();
+        var result = '';
+        var i;
+
+        for (i = 0; i < lower.length; ++i) {
+            if (lower[i] !== upper[i] || whitelist.indexOf(lower[i]) > -1 || (text[i] === '\'' && preserveApostrophe)) {
+                result += text[i];
+            } else {
+                result += ' ';
+            }
+        }
+
+        return this.trim(result.replace(/\s+/g, ' ').split(' '));
+    }
+}
+
+export = CaseTokenizer;

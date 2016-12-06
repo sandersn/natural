@@ -48,4 +48,4 @@ Bag.prototype.unpack = function() {
     return this.dictionary.slice();
 };
 
-module.exports = Bag;
+export = Bag;

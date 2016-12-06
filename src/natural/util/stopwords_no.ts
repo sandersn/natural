@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011, David Przybilla, Chris Umbel
+Copyright (c) 2014, Kristoffer Brabrand
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,18 @@ THE SOFTWARE.
 
 // a list of commonly used words that have little meaning and can be excluded
 // from analysis.
-var words = [
-    '的','地','得','和','跟',
-    '与','及','向','并','等',
-    '更','已','含','做','我',
-    '你','他','她','们','某',
-    '该','各','每','这','那',
-    '哪','什','么','谁','年',
-    '月','日','时','分','秒',
-    '几','多','来','在','就',
-    '又','很','呢','吧','吗',
-    '了','嘛','哇','儿','哼',
-    '啊','嗯','是','着','都',
-    '不','说','也','看','把',
-    '还','个','有','小','到',
-    '一','为','中','于','对',
-    '会','之','第','此','或',
-    '共','按','请'
-];
-    
-// tell the world about the noise words.    
-exports.words = words;
+export var words = [
+    'og','i','jeg','det','at','en','et','den','til','er','som',
+    'på','de','med','han','av','ikke','der','så','var','meg',
+    'seg','men','ett','har','om','vi','min','mitt','ha','hadde',
+    'hun','nå','over','da','ved','fra','du','ut','sin','dem',
+    'oss','opp','man','kan','hans','hvor','eller','hva','skal',
+    'selv','sjøl','her','alle','vil','bli','ble','blitt','kunne',
+    'inn','når','være','kom','noen','noe','ville','dere','som',
+    'deres','kun','ja','etter','ned','skulle','denne','for','deg',
+    'si','sine','sitt','mot','å','meget','hvorfor','dette','disse',
+    'uten','hvordan','ingen','din','ditt','blir','samme','hvilken',
+    'hvilke','sånn','inni','mellom','vår','hver','hvem','vors',
+    'hvis','både','bare','enn','fordi','før','mange','også','slik',
+    'vært','være','begge','siden','henne','hennar','hennes',
+    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_'];

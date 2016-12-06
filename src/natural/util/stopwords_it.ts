@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 // a list of commonly used words that have little meaning and can be excluded
 // from analysis.
-var words = [
+export var words = [
     'ad','al','allo','ai','agli','all','agl','alla','alle','con','col','coi','da','dal','dallo',
     'dai','dagli','dall','dagl','dalla','dalle','di','del','dello','dei','degli','dell','degl',
     'della','delle','in','nel','nello','nei','negli','nell','negl','nella','nelle','su','sul',
@@ -47,6 +47,3 @@ var words = [
     'starebbe','staremmo','stareste','starebbero','stavo','stavi','stava','stavamo','stavate','stavano',
     'stetti','stesti','stette','stemmo','steste','stettero','stessi','stesse','stessimo','stessero','stando',
      '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_'];
-    
-// tell the world about the noise words.    
-exports.words = words;

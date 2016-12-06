@@ -24,7 +24,7 @@ THE SOFTWARE.
 // from analysis.
 // This dutch wordlist has been parsed from a list created by Damien van Holten
 // source: http://www.damienvanholten.com/blog/dutch-stop-words/
-var words = [
+export var words = [
     'aan', 'af', 'al', 'alles', 'als', 'altijd', 'andere', 'ben', 'bij', 'daar',
     'dan', 'dat', 'de', 'der', 'deze', 'die', 'dit', 'doch', 'doen', 'door', 'dus',
     'een', 'eens', 'en', 'er', 'ge', 'geen', 'geweest', 'haar', 'had', 'heb',
@@ -38,6 +38,3 @@ var words = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
     'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '$', '1',
     '2', '3', '4', '5', '6', '7', '8', '9', '0', '_', '-'];
-
-// tell the world about the noise words.
-exports.words = words;

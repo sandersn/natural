@@ -25,21 +25,25 @@
  * a topo sort for a digraph
  * @param {Digraph}
  */
-var Topological = function(g) {
-    this.isDag = true;
-    this.sorted = topoSort(uniqueVertexs(g.edges()), g.edges());
-};
+class Topological {
+    isDag: boolean;
+    sorted: any[];
+    constructor(g) {
+        this.isDag = true;
+        this.sorted = topoSort(uniqueVertexs(g.edges()), g.edges());
+    }
 
-Topological.prototype.isDAG = function() {
-    return this.isDag;
-};
+    isDAG() {
+        return this.isDag;
+    };
 
-/**
- * get ordered vertexs of digraph
- */
-Topological.prototype.order = function() {
-    return this.sorted.slice();
-};
+    /**
+     * get ordered vertexs of digraph
+     */
+    order = function() {
+        return this.sorted.slice();
+    };
+}
 
 /**
  * @param {Array} all vertex in digraph
@@ -95,4 +99,4 @@ function uniqueVertexs(edges) {
     return vertexs;
 };
 
-module.exports = Topological;
+export = Topological;

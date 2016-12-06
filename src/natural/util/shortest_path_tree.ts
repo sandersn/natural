@@ -21,8 +21,8 @@
  */
 'use strict';
 
-var EdgeWeightedDigraph = require('./edge_weighted_digraph'),
-    Topological = require('./topological');
+import EdgeWeightedDigraph = require('./edge_weighted_digraph');
+import Topological = require('./topological');
 
 /**
   *  The ShortestPathTree represents a data type for solving the
@@ -97,4 +97,4 @@ ShortestPathTree.prototype.pathTo = function(v) {
     return path.reverse();
 };
 
-module.exports = ShortestPathTree;
+export = ShortestPathTree;

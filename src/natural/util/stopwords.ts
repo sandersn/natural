@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 // a list of commonly used words that have little meaning and can be excluded
 // from analysis.
-var words = [
+export var words = [
     'about', 'above', 'after', 'again', 'all', 'also', 'am', 'an', 'and', 'another',
     'any', 'are', 'as', 'at', 'be', 'because', 'been', 'before', 'being', 'below',
     'between', 'both', 'but', 'by', 'came', 'can', 'cannot', 'come', 'could', 'did',
@@ -39,6 +39,3 @@ var words = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
     'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '$', '1',
     '2', '3', '4', '5', '6', '7', '8', '9', '0', '_'];
-
-// tell the world about the noise words.
-exports.words = words;

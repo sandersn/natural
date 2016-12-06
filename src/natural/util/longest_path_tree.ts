@@ -21,8 +21,8 @@
  */
 'use strict';
 
-var EdgeWeightedDigraph = require('./edge_weighted_digraph'),
-    Topological = require('./topological');
+import EdgeWeightedDigraph = require('./edge_weighted_digraph');
+import Topological = require('./topological');
 
 /**
   *  The LongestPathTree represents a data type for solving the
@@ -96,4 +96,4 @@ LongestPathTree.prototype.pathTo = function(v) {
     return path.reverse();
 };
 
-module.exports = LongestPathTree;
+export = LongestPathTree;

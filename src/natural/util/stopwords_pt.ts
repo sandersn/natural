@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 // a list of commonly used words that have little meaning and can be excluded
 // from analysis.
-var words = [
+export var words = [
   'a',
   'à',
   'ao',
@@ -131,6 +131,3 @@ var words = [
   'vossos',
   '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_'
 ];
-
-// tell the world about the noise words.
-exports.words = words;

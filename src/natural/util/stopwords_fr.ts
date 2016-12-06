@@ -23,7 +23,7 @@
 // A list of commonly used french words that have little meaning and can be excluded
 // from analysis.
 
-var words = ['être', 'avoir', 'faire',
+export var words = ['être', 'avoir', 'faire',
     'a',
     'au',
     'aux',
@@ -190,5 +190,3 @@ var words = ['être', 'avoir', 'faire',
     'sans',
     'soi'
 ];
-
-exports.words = words;

@@ -21,8 +21,8 @@
  */
 'use strict';
 
-var util = require('util'),
-    Bag = require('./bag');
+import util = require('util');
+import Bag = require('./bag');
 
 var DirectedEdge = function(start, end, weight) {
     this.start = start;
@@ -109,4 +109,4 @@ EdgeWeightedDigraph.prototype.toString = function() {
     return result.join('\n');
 };
 
-module.exports = EdgeWeightedDigraph;
+export = EdgeWeightedDigraph;

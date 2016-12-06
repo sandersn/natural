@@ -23,7 +23,7 @@ THE SOFTWARE.
 // a list of commonly used words that have little meaning and can be excluded
 // from analysis.
 // list based on: http://pl.wikipedia.org/wiki/Wikipedia:Stopwords
-var words = [
+export var words = [
     'a', 'aby', 'ach', 'acz', 'aczkolwiek', 'aj', 'albo', 'ale', 'ależ', 'ani',
     'aż', 'bardziej', 'bardzo', 'bo', 'bowiem', 'by', 'byli', 'bynajmniej',
     'być', 'był', 'była', 'było', 'były', 'będzie', 'będą', 'cali', 'cała',
@@ -57,6 +57,3 @@ var words = [
     'wy', 'właśnie', 'z', 'za', 'zapewne', 'zawsze', 'ze', 'zł', 'znowu',
     'znów', 'został', 'żaden', 'żadna', 'żadne', 'żadnych', 'że', 'żeby',
     '$', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_'];
-
-// tell the world about the noise words.
-exports.words = words;

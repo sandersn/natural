@@ -1,6 +1,5 @@
 /*
-Copyright (c) 2011, Chris Umbel
-Farsi Stop Words by Fardin Koochaki <me@fardinak.com>
+Copyright (c) 2011, David Przybilla, Chris Umbel
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,16 +22,12 @@ THE SOFTWARE.
 
 // a list of commonly used words that have little meaning and can be excluded
 // from analysis.
-var words = [
-    // Words
-    'از', 'با', 'یه', 'برای', 'و', 'باید', 'شاید',
-
-    // Symbols
-    '؟', '!', '٪', '.', '،', '؛', ':', ';', ',',
-    
-    // Numbers
-    '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', '۰'
-];
-    
-// tell the world about the noise words.    
-exports.words = words;
+export var words = [
+    'a','un','el','ella','y','sobre','de','la','que','en',
+    'los','del','se','las','por','un','para','con','no',
+    'una','su','al','lo','como','más','pero','sus','le',
+    'ya','o','porque','cuando','muy','sin','sobre','también',
+    'me','hasta','donde','quien','desde','nos','durante','uno',
+    'ni','contra','ese','eso','mí','qué','otro','él','cual',
+    'poco','mi','tú','te','ti','sí',
+     '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_'];

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@types/log4js": "0.0.32",
+    "@types/underscore": "^1.7.36",
     "apparatus": ">= 0.0.9",
     "log4js": "*",
     "sylvester": ">= 0.0.12",

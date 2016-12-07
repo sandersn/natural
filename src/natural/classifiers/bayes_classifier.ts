@@ -20,40 +20,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var util = require('util'),
-    Classifier = require('./classifier'),
-    ApparatusBayesClassifier = require('apparatus').BayesClassifier;
-
-var BayesClassifier = function(stemmer, smoothing) {
-    var abc = new ApparatusBayesClassifier();
-    if (smoothing && isFinite(smoothing)) {
-        abc = new ApparatusBayesClassifier(smoothing);
+import Classifier = require('./classifier');
+import { BayesClassifier as ApparatusBayesClassifier } from  'apparatus';
+class BayesClassifier extends Classifier {
+    constructor(stemmer, smoothing) {
+        var abc = new ApparatusBayesClassifier();
+        if (smoothing && isFinite(smoothing)) {
+            abc = new ApparatusBayesClassifier(smoothing);
+        }
+        super(abc, stemmer);
     }
-    Classifier.call(this, abc, stemmer);
-};
 
-util.inherits(BayesClassifier, Classifier);
+    static restore(classifier, stemmer) {
+        classifier = Classifier.restore(classifier, stemmer);
+        classifier.__proto__ = BayesClassifier.prototype;
+        classifier.classifier = ApparatusBayesClassifier.restore(classifier.classifier);
 
-function restore(classifier, stemmer) {
-    classifier = Classifier.restore(classifier, stemmer);
-    classifier.__proto__ = BayesClassifier.prototype;
-    classifier.classifier = ApparatusBayesClassifier.restore(classifier.classifier);
+        return classifier;
+    }
 
-    return classifier;
+    static load(filename, stemmer, callback) {
+        Classifier.load(filename, function(err, classifier) {
+            if (err) {
+                callback(err);
+            }
+            else {
+                callback(err, BayesClassifier.restore(classifier, stemmer));
+            }
+        });
+    }
 }
 
-function load(filename, stemmer, callback) {
-    Classifier.load(filename, function(err, classifier) {
-        if (err) {
-            callback(err);
-        }
-        else {
-            callback(err, restore(classifier, stemmer));
-        }
-    });
-}
-
-BayesClassifier.restore = restore;
-BayesClassifier.load = load;
-
-module.exports = BayesClassifier;
+export = BayesClassifier;

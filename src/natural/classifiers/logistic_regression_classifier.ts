@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import Classifier = require('./classifier');
-import { LogisticRegressionClassifier as ApparatusLogisticRegressionClassifier } from 'apparatus';
+import Classifier = require("./classifier");
+import { LogisticRegressionClassifier as ApparatusLogisticRegressionClassifier } from "apparatus";
 
 class LogisticRegressionClassifier extends Classifier {
     constructor(stemmer) {

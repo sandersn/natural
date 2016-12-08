@@ -38,24 +38,14 @@ THE SOFTWARE.
  */
 
 
-var CountInflector = function() {
-};
+class CountInflector {
+    static nth(i: number | string): string {
+        return i.toString() + nthForm(i);
+    }
+}
 
 
-/**
- * @param {number|string} i
- * @return {string}
- */
-CountInflector.nth = function(i) {
-  return i.toString() + nthForm(i);
-};
-
-
-/**
- * @param {number|string} i
- * @return {string}
- */
-function nthForm(i) {
+function nthForm(i: number | string): string {
   if (i == 1 || i == 'I') {
     return 'er';
   }
@@ -63,4 +53,4 @@ function nthForm(i) {
   return 'e';
 }
 
-module.exports = CountInflector;
+export = CountInflector;

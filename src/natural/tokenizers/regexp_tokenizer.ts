@@ -63,7 +63,7 @@ export class RegexpTokenizer extends Tokenizer {
  * 
  */
 export class WordTokenizer extends RegexpTokenizer {
-    constructor(options) {
+    constructor(options?) {
         super(options);
         this._pattern = /[^A-Za-zА-Яа-я0-9_]+/;
     }

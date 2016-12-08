@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014, Lee Wenzhu
+Copyright (c) 2011, Rob Ellis, Chris Umbel
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,25 +20,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var _ = require("underscore")._;
+import _ = require("underscore");
+import { WordTokenizer as Tokenizer } from '../tokenizers/regexp_tokenizer';
+let tokenizer = new Tokenizer();
 
-exports.ngrams = function(sequence, n, startSymbol, endSymbol) {
-    return ngrams(sequence, n, startSymbol, endSymbol);
+export function setTokenizer(t) {
+    if(!_.isFunction(t.tokenize))
+        throw new Error('Expected a valid Tokenizer');
+    tokenizer = t;
 }
 
-exports.bigrams = function(sequence, startSymbol, endSymbol) {
-    return ngrams(sequence, 2, startSymbol, endSymbol);
+export function ngrams(sequence, n, startSymbol, endSymbol) {
+    return ngramsWorker(sequence, n, startSymbol, endSymbol);
 }
 
-exports.trigrams = function(sequence, startSymbol, endSymbol) {
-    return ngrams(sequence, 3, startSymbol, endSymbol);
+export function bigrams(sequence, startSymbol, endSymbol) {
+    return ngramsWorker(sequence, 2, startSymbol, endSymbol);
 }
 
-var ngrams = function(sequence, n, startSymbol, endSymbol) {
-    var result = [], i;
+export function trigrams(sequence, startSymbol, endSymbol) {
+    return ngramsWorker(sequence, 3, startSymbol, endSymbol);
+}
+
+export function multrigrams(sequence, n, startSymbol, endSymbol) {
+    return ngramsWorker(sequence, n, startSymbol, endSymbol);
+}
+
+var ngramsWorker = function(sequence, n, startSymbol, endSymbol) {
+    var result = [];
     
     if (!_(sequence).isArray()) {
-        sequence = sequence.split('');
+        sequence = tokenizer.tokenize(sequence);
     }
 
     var count = _.max([0, sequence.length - n + 1]);
@@ -47,7 +59,7 @@ var ngrams = function(sequence, n, startSymbol, endSymbol) {
     if(typeof startSymbol !== "undefined" && startSymbol !== null) {
         // Create an array of (n) start symbols
         var blanks = [];
-        for(i = 0 ; i < n ; i++) {
+        for(var i = 0 ; i < n ; i++) {
             blanks.push(startSymbol);
         }
 
@@ -59,7 +71,7 @@ var ngrams = function(sequence, n, startSymbol, endSymbol) {
     }
 
     // Build the complete ngrams
-    for (i = 0; i < count; i++) {
+    for (var i = 0; i < count; i++) {
         result.push(sequence.slice(i, i + n));
     }
 
@@ -79,5 +91,5 @@ var ngrams = function(sequence, n, startSymbol, endSymbol) {
     }
     
     return result;
-};
+}
 

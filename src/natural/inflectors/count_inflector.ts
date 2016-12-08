@@ -39,13 +39,11 @@ function nthForm(i) {
     }
 }
 
-function nth(i) {
-    return i.toString() + nthForm(i);
+
+class CountInflector {
+    static nth(i) {
+        return i.toString() + nthForm(i);
+    }
 }
 
-var CountInflector = function() {
-};
-
-CountInflector.nth = nth;
-
-module.exports = CountInflector;
+export = CountInflector;

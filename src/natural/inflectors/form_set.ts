@@ -20,9 +20,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var FormSet = function() {
-    this.regularForms = [];
-    this.irregularForms = {};
+class FormSet {
+    regularForms: any[];
+    irregularForms: any;
+    constructor() {
+        this.regularForms = [];
+        this.irregularForms = {};
+    }
 }
 
-module.exports = FormSet;
+export = FormSet;

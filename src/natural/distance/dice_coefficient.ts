@@ -42,12 +42,12 @@ var wordLetterPairs = function (str) {
 };
 
 // Perform some sanitization steps
-var sanitize = function (str) {
+function sanitize(str: string): string {
   return str.toLowerCase().replace(/^\s+|\s+$/g, '');
 };
 
 // Compare two strings, and spit out a number from 0-1
-var compare = function (str1, str2) {
+function compare(str1: string, str2: string) {
   var sanitized_str1 = sanitize(str1);
   var sanitized_str2 = sanitize(str2);
   var pairs1 = wordLetterPairs(sanitized_str1);
@@ -76,4 +76,4 @@ var compare = function (str1, str2) {
   }
 };
 
-module.exports = compare;
+export = compare;

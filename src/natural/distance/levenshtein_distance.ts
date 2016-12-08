@@ -24,12 +24,16 @@ THE SOFTWARE.
  * contribution by sidred123
  */
 
-/*
+interface LevenshteinOptions {
+    insertion_cost?: number;
+    deletion_cost?: number;
+    substitution_cost?: number;
+}
+/**
  * Compute the Levenshtein distance between two strings.
  * Algorithm based from Speech and Language Processing - Daniel Jurafsky and James H. Martin.
  */
-
-function LevenshteinDistance (source, target, options) {
+function LevenshteinDistance (source: string, target: string, options: LevenshteinOptions) {
     options = options || {};
     if(isNaN(options.insertion_cost)) options.insertion_cost = 1;
     if(isNaN(options.deletion_cost)) options.deletion_cost = 1;
@@ -65,4 +69,4 @@ function LevenshteinDistance (source, target, options) {
     return distanceMatrix[sourceLength][targetLength];
 }
 
-module.exports = LevenshteinDistance;
+export = LevenshteinDistance;

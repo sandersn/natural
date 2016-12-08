@@ -26,7 +26,7 @@ THE SOFTWARE.
 // http://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance
 // s1 is the first string to compare
 // s2 is the second string to compare
-function distance(s1, s2) {
+function distance(s1: string, s2: string) {
     if (typeof(s1) != "string" || typeof(s2) != "string") return 0;
     if (s1.length == 0 || s2.length == 0) 
         return 0;
@@ -37,9 +37,9 @@ function distance(s1, s2) {
     var m = 0; // number of matches
     var t = 0; // number of transpositions
 
-    //debug helpers
-    //console.log("s1: " + s1 + "; s2: " + s2);
-    //console.log(" - matchWindow: " + matchWindow);
+    // debug helpers
+    // console.log("s1: " + s1 + "; s2: " + s2);
+    // console.log(" - matchWindow: " + matchWindow);
 
     // find matches
     for (var i = 0; i < s1.length; i++) {
@@ -86,9 +86,9 @@ function distance(s1, s2) {
     	}
     }
     
-    //debug helpers:
-    //console.log(" - matches: " + m);
-    //console.log(" - transpositions: " + t);
+    // debug helpers:
+    // console.log(" - matches: " + m);
+    // console.log(" - transpositions: " + t);
     t = t / 2.0;
     return (m / s1.length + m / s2.length + (m - t) / m) / 3;
 }
@@ -98,19 +98,19 @@ function distance(s1, s2) {
 // s1 is the first string to compare
 // s2 is the second string to compare
 // dj is the Jaro Distance (if you've already computed it), leave blank and the method handles it
-function JaroWinklerDistance(s1, s2, dj) {
-		if (s1 == s2) {
-				return 1 
-		}
-		else {
-		    var jaro;
-		    (typeof(dj) == 'undefined')? jaro = distance(s1,s2) : jaro = dj;
-		    var p = 0.1; //
-		    var l = 0 // length of the matching prefix
-		    while(s1[l] == s2[l] && l < 4)
-		        l++;
-		    
-		    return jaro + l * p * (1 - jaro);
-		}
+function JaroWinklerDistance(s1: string, s2: string, dj?: number) {
+    if (s1 == s2) {
+        return 1;
+    }
+    else {
+        var jaro;
+        (typeof(dj) == 'undefined')? jaro = distance(s1,s2) : jaro = dj;
+        var p = 0.1; //
+        var l = 0 // length of the matching prefix
+        while(s1[l] == s2[l] && l < 4)
+            l++;
+        
+        return jaro + l * p * (1 - jaro);
+    }
 }
-module.exports = JaroWinklerDistance;
+export = JaroWinklerDistance;

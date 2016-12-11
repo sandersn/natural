@@ -30,7 +30,7 @@
  * @param {Object.<string, string>} translationTable The translation table of key value.
  * @return {function(string): string} A translating function.
  */
-export function replacer(translationTable) {
+export function replacer(translationTable: { [s: string]: string }): (s: string) => string {
   /**
    * An array of translationTable keys.
    * @type {Array.<string>}

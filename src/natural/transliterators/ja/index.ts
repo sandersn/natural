@@ -39,7 +39,7 @@
  * \@todo Take iteration marks into account.
  */
 
-var replacer = require('../../util/utils').replacer;
+import { replacer } from '../../util/utils';
 
 var transliterationTable1 = {
   'ウァ': 'wa', // KATAKANA LETTER U + SMALL A
@@ -536,7 +536,7 @@ var replace1 = replacer(transliterationTable1);
 var replace2 = replacer(transliterationTable2);
 var replace3 = replacer(transliterationTable3);
 
-module.exports = function(str) {
+export = function(str: string) {
   str = replace1(str);
 
   str = str

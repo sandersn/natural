@@ -20,11 +20,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var stopwords = require('../util/stopwords');
-var Tokenizer = require('../tokenizers/aggressive_tokenizer'),
-    tokenizer = new Tokenizer();
+import stopwords = require('../util/stopwords');
+import Tokenizer = require('../tokenizers/aggressive_tokenizer');
+var tokenizer = new Tokenizer();
 
-module.exports = function() {
+export = function() {
     this.compare = function(stringA, stringB) {
         return this.process(stringA) == this.process(stringB);
     };
@@ -32,23 +32,23 @@ module.exports = function() {
     this.attach = function() {
 	var phonetic = this;
 
-        String.prototype.soundsLike = function(compareTo) {
+        (String.prototype as any).soundsLike = function(compareTo) {
             return phonetic.compare(this, compareTo);
-        }
-        
-        String.prototype.phonetics = function() {
+        };
+
+        (String.prototype as any).phonetics = function() {
             return phonetic.process(this);
-        }
-	
-        String.prototype.tokenizeAndPhoneticize = function(keepStops) {
+        };
+
+        (String.prototype as any).tokenizeAndPhoneticize = function(keepStops) {
             var phoneticizedTokens = [];
-            
+
             tokenizer.tokenize(this).forEach(function(token) {
                 if(keepStops || stopwords.words.indexOf(token) < 0)
                     phoneticizedTokens.push(token.phonetics());
             });
-            
+
             return phoneticizedTokens;
-        }
+        };
     };
 };

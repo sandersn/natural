@@ -240,8 +240,8 @@ function normalizeLength(token, length) {
     return token.slice(0, length);
 }
 
-var Phonetic = require('./phonetic');
+import Phonetic = require('./phonetic');
 var soundex = new Phonetic();
 soundex.process = process;
-module.exports = soundex;
+export = soundex;
 

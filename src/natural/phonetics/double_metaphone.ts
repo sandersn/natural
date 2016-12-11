@@ -20,27 +20,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Phonetic = require('./phonetic');
+import Phonetic = require('./phonetic');
 
 var DoubleMetaphone = new Phonetic();
-module.exports = DoubleMetaphone;
+export = DoubleMetaphone;
 
-function isVowel(c) {
+function isVowel(c: string) {
 	return c && c.match(/[aeiouy]/i);
 }
 
-function truncate(string, length) {
+function truncate(string: string, length: number): string {
     if(string.length >= length)
         string = string.substring(0, length);
-        
+
     return string;
 }
 
-function process(token, maxLength) {
-	token = token.toUpperCase();
-	var primary = '', secondary = '';	
+function process(token: string, maxLength = 32) {
+    token = token.toUpperCase();
+    var primary = '', secondary = '';	
     var pos = 0;
-    maxLength == maxLength || 32;
 
     function subMatch(startOffset, stopOffset, terms) {
         return subMatchAbsolute(pos + startOffset, pos + stopOffset, terms);
@@ -59,7 +58,7 @@ function process(token, maxLength) {
     	addSecondary(primaryAppendage, primaryAppendage);
     }
 
-    function addCompressedDouble(c, encoded) {
+    function addCompressedDouble(c, encoded?) {
     	if(token[pos + 1] == c)
     		pos++;
     	add(encoded || c);
@@ -237,7 +236,7 @@ function process(token, maxLength) {
                     || san) {
                 add('H');            
             } else
-                add('J', 'H');
+                add('J');
         } else {
             if(pos == 0/* && !jose*/) {
                 addSecondary('J', 'A');
@@ -256,7 +255,7 @@ function process(token, maxLength) {
     		if(pos == token.length - 3 && (
     					subMatch(-1, 3, ['ILLO', 'ILLA', 'ALLE']) || (
     						token.substring(pos - 1, pos + 3) == 'ALLE' &&
-    						(subMatch(-2, -1, ['AS', 'OS']) > -1 ||
+    						(subMatch(-2, -1, ['AS', 'OS']) ||
     						['A', 'O'].indexOf(token[token.length - 1]) > -1)))) {
     			addSecondary('L', '');
     			pos++;

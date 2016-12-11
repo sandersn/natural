@@ -20,15 +20,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import { FindResult, IndexRecord } from './wordnet_types';
 import WordNetFile = require('./wordnet_file');
 import fs = require('fs');
 
-function getFileSize(path) {
+function getFileSize(path: string | Buffer) {
   var stat = fs.statSync(path);
   return stat.size;
 }
 
-function findPrevEOL(fd, pos, callback) {
+function findPrevEOL(fd: number, pos: number, callback: (pos: number) => void) {
   var buff = new Buffer(1024);
   if(pos == 0)
     callback(0);
@@ -42,14 +43,14 @@ function findPrevEOL(fd, pos, callback) {
   }
 }
 
-function readLine(fd, pos, callback) {
+function readLine(fd: number, pos: number, callback: (line: string) => void) {
   var buff = new Buffer(1024);
   findPrevEOL(fd, pos, function(pos) {
     WordNetFile.appendLineChar(fd, pos, 0, buff, callback);
   });
 }
 
-function miss(callback) {
+function miss(callback: (result: FindResult) => void) {
   callback({status: 'miss'});
 }
 
@@ -58,7 +59,7 @@ class IndexFile extends WordNetFile {
         super(dataDir, 'index.' + name);
     }
 
-    private findAt(fd, size, pos, lastPos, adjustment, searchKey, callback, lastKey?) {
+    private findAt(fd: number, size: number, pos: number, lastPos: number, adjustment: number, searchKey: string, callback: (result: FindResult) => void, lastKey?: string) {
         if (lastPos == pos || pos >= size) {
             miss(callback);
         } else {
@@ -84,7 +85,7 @@ class IndexFile extends WordNetFile {
     }
 
 
-    find(searchKey, callback) {
+    find(searchKey: string, callback: (result: FindResult) => void) {
         this.open((err, fd, done) => {
             if(err) {
                 console.log(err);
@@ -97,7 +98,7 @@ class IndexFile extends WordNetFile {
         });
     }
 
-    lookupFromFile(word, callback) {
+    lookup(word: string, callback: (record: IndexRecord) => void) {
         this.find(word, function(record) {
             var indexRecord = null;
 
@@ -123,11 +124,6 @@ class IndexFile extends WordNetFile {
             callback(indexRecord);
         });
     }
-
-    lookup(word, callback) {
-        this.lookupFromFile(word, callback);
-    }
-
 }
 
 export = IndexFile;

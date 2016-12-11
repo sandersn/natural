@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
+import { WordnetData, Pointer } from './wordnet_types';
 import WordNetFile = require('./wordnet_file');
 import fs = require('fs');
 
@@ -28,7 +28,7 @@ class DataFile extends WordNetFile {
         super(dataDir, 'data.' + name);
     }
 
-    get(location, callback) {
+    get(location: number, callback: (data: WordnetData) => void) {
         var buff = new Buffer(4096);
 
         this.open(function(err, fd, done) {
@@ -36,7 +36,7 @@ class DataFile extends WordNetFile {
                 done();
                 var data = line.split('| ');
                 var tokens = data[0].split(/\s+/);
-                var ptrs = [];
+                var ptrs: Pointer[] = [];
                 var wCnt = parseInt(tokens[3], 16);
                 var synonyms = [];
 

@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
         "allowJs": true,
-        "outDir": "build"
+        "outDir": "build",
+        "noImplicitAny": true,
+        "noImplicitThis": true
     },
     "include": ["src/natural/**/*"],
     "exclude": ["lib", "node_modules"]

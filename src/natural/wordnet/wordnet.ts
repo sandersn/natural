@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import { WordnetData, Pointer } from './wordnet_types';
 import IndexFile = require('./index_file');
 import DataFile = require('./data_file');
 
@@ -33,7 +34,7 @@ class WordNet {
     adjData: DataFile;
     advData: DataFile;
 
-    constructor(dataDir) {
+    constructor(dataDir: string) {
         if (!dataDir) {
             try {
                 var WNdb = require('wordnet-db');
@@ -55,40 +56,36 @@ class WordNet {
         this.advData = new DataFile(dataDir, 'adv');
     }
 
-    pushResults(data, results, offsets, callback) {
-        var wordnet = this;
-
+    pushResults(data: DataFile, results: WordnetData[], offsets: number[], callback: (results: WordnetData[]) => void) {
         if(offsets.length == 0) {
             callback(results);
         } else {
-            data.get(offsets.pop(), function(record) {
+            data.get(offsets.pop(), record => {
                 results.push(record);
-                wordnet.pushResults(data, results, offsets, callback);
+                this.pushResults(data, results, offsets, callback);
             });
         }
     }
 
-    lookupFromFiles(files, results, word, callback) {
-        var wordnet = this;
-
+    lookupFromFiles(files: { index: IndexFile, data: DataFile }[], results: WordnetData[], word: string, callback: (results: WordnetData[]) => void) {
         if(files.length == 0)
             callback(results);
         else {
             var file = files.pop();
 
-            file.index.lookup(word, function(record) {
+            file.index.lookup(word, record => {
                 if(record) {
-                    wordnet.pushResults(file.data, results, record.synsetOffset, function() {
-                        wordnet.lookupFromFiles(files, results, word, callback);
+                    this.pushResults(file.data, results, record.synsetOffset, () => {
+                        this.lookupFromFiles(files, results, word, callback);
                     });
                 } else {
-                    wordnet.lookupFromFiles(files, results, word, callback);
+                    this.lookupFromFiles(files, results, word, callback);
                 }
             });
         }
     }
 
-    lookup(word, callback) {
+    lookup(word: string, callback: (results: WordnetData[]) => void) {
         word = word.toLowerCase().replace(/\s+/g, '_');
 
         this.lookupFromFiles([
@@ -99,16 +96,11 @@ class WordNet {
         ], [], word, callback);
     }
 
-    get(synsetOffset, pos, callback) {
-        var dataFile = this.getDataFile(pos);
-        var wordnet = this;
-
-        dataFile.get(synsetOffset, function(result) {
-            callback(result);
-        });
+    get(synsetOffset: number, pos: string, callback: (data: WordnetData) => void) {
+        this.getDataFile(pos).get(synsetOffset, callback);
     }
 
-    getDataFile(pos) {
+    getDataFile(pos: string) {
         switch(pos) {
         case 'n':
             return this.nounData;
@@ -121,47 +113,40 @@ class WordNet {
         }
     }
 
-    loadSynonyms(synonyms, results, ptrs, callback) {
-        var wordnet = this;
-
+    loadSynonyms(synonyms: WordnetData[], results: WordnetData[], ptrs: Pointer[], callback: (synonyms: WordnetData[]) => void) {
         if(ptrs.length > 0) {
             var ptr = ptrs.pop();
 
-            this.get(ptr.synsetOffset, ptr.pos, function(result) {
-                synonyms.push(result);
-                wordnet.loadSynonyms(synonyms, results, ptrs, callback);
+            this.get(ptr.synsetOffset, ptr.pos, synonym => {
+                synonyms.push(synonym);
+                this.loadSynonyms(synonyms, results, ptrs, callback);
             });
         } else {
-            wordnet.loadResultSynonyms(synonyms, results, callback);
+            this.loadResultSynonyms(synonyms, results, callback);
         }
     }
 
-    loadResultSynonyms(synonyms, results, callback) {
-        var wordnet = this;
-
+    loadResultSynonyms(synonyms: WordnetData[], results: WordnetData[], callback: (synonyms: WordnetData[]) => void) {
         if(results.length > 0) {
             var result = results.pop();
-            wordnet.loadSynonyms(synonyms, results, result.ptrs, callback);
+            this.loadSynonyms(synonyms, results, result.ptrs, callback);
         } else
             callback(synonyms);
     }
 
-    lookupSynonyms(word, callback) {
-        var wordnet = this;
-
-        wordnet.lookup(word, function(results) {
-            wordnet.loadResultSynonyms([], results, callback);
+    lookupSynonyms(word: string, callback: (synonyms: WordnetData[]) => void) {
+        this.lookup(word, results => {
+            this.loadResultSynonyms([], results, callback);
         });
     }
 
     getSynonyms() {
-        var wordnet = this;
         var callback = arguments[2] ? arguments[2] : arguments[1];
         var pos = arguments[0].pos ? arguments[0].pos : arguments[1];
         var synsetOffset = arguments[0].synsetOffset ? arguments[0].synsetOffset : arguments[0];
 
-        this.get(synsetOffset, pos, function(result) {
-            wordnet.loadSynonyms([], [], result.ptrs, callback);
+        this.get(synsetOffset, pos, result => {
+            this.loadSynonyms([], [], result.ptrs, callback);
         });
     }
 

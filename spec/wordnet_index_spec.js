@@ -28,13 +28,13 @@ describe('indexFile', function() {
 
         it('should look up a word if the file exists', function() {
             indexFile = new IndexFile('spec/test_data/', 'document1.txt');
-            indexFile.lookupFromFile('node', function(indexRecord) {
+            indexFile.lookup('node', function(indexRecord) {
             });
         });
 
         it('should fail to lookup a word if the file does not exist', function() {
             indexFile = new IndexFile('spec/test_data/', 'nonexistent.txt');
-            indexFile.lookupFromFile('node', function(err) {
+            indexFile.lookup('node', function(err) {
                 err.code.should.equal('ENOENT');
             });
         });

@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var IndexFile = require('./index_file'),
-  DataFile = require('./data_file');
+import IndexFile = require('./index_file');
+import DataFile = require('./data_file');
 
 function pushResults(data, results, offsets, callback) {
   var wordnet = this;
@@ -133,37 +133,57 @@ function getSynonyms() {
   });
 }
 
-function WordNet(dataDir) {
+class WordNet {
+    nounIndex: IndexFile;
+    verbIndex: IndexFile;
+    adjIndex: IndexFile;
+    advIndex: IndexFile;
+    nounData: DataFile;
+    verbData: DataFile;
+    adjData: DataFile;
+    advData: DataFile;
 
-  if (!dataDir) {
-    try {
-      var WNdb = require('wordnet-db');
-    } catch(e) {
-      console.error("Please 'npm install wordnet-db' before using WordNet module or specify a dict directory.");
-      throw e;
+    get;
+    lookup;
+    lookupFromFiles;
+    pushResults;
+    loadResultSynonyms;
+    loadSynonyms;
+    lookupSynonyms;
+    getSynonyms;
+    getDataFile;
+
+    constructor(dataDir) {
+        if (!dataDir) {
+            try {
+                var WNdb = require('wordnet-db');
+            } catch(e) {
+                console.error("Please 'npm install wordnet-db' before using WordNet module or specify a dict directory.");
+                throw e;
+            }
+            dataDir = WNdb.path;
+        }
+
+        this.nounIndex = new IndexFile(dataDir, 'noun');
+        this.verbIndex = new IndexFile(dataDir, 'verb');
+        this.adjIndex = new IndexFile(dataDir, 'adj');
+        this.advIndex = new IndexFile(dataDir, 'adv');
+
+        this.nounData = new DataFile(dataDir, 'noun');
+        this.verbData = new DataFile(dataDir, 'verb');
+        this.adjData = new DataFile(dataDir, 'adj');
+        this.advData = new DataFile(dataDir, 'adv');
+
+        this.get = get;
+        this.lookup = lookup;
+        this.lookupFromFiles = lookupFromFiles;
+        this.pushResults = pushResults;
+        this.loadResultSynonyms = loadResultSynonyms;
+        this.loadSynonyms = loadSynonyms;
+        this.lookupSynonyms = lookupSynonyms;
+        this.getSynonyms = getSynonyms;
+        this.getDataFile = getDataFile;
     }
-    dataDir = WNdb.path;
-  }
-
-  this.nounIndex = new IndexFile(dataDir, 'noun');
-  this.verbIndex = new IndexFile(dataDir, 'verb');
-  this.adjIndex = new IndexFile(dataDir, 'adj');
-  this.advIndex = new IndexFile(dataDir, 'adv');
-
-  this.nounData = new DataFile(dataDir, 'noun');
-  this.verbData = new DataFile(dataDir, 'verb');
-  this.adjData = new DataFile(dataDir, 'adj');
-  this.advData = new DataFile(dataDir, 'adv');
-
-  this.get = get;
-  this.lookup = lookup;
-  this.lookupFromFiles = lookupFromFiles;
-  this.pushResults = pushResults;
-  this.loadResultSynonyms = loadResultSynonyms;
-  this.loadSynonyms = loadSynonyms;
-  this.lookupSynonyms = lookupSynonyms;
-  this.getSynonyms = getSynonyms;
-  this.getDataFile = getDataFile;
 }
 
-module.exports = WordNet;
+export = WordNet;

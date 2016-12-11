@@ -32,7 +32,7 @@ class WordNetFile {
         this.fileName = fileName;
         this.filePath = path.join(this.dataDir, this.fileName);
     }
-    open(callback) {
+    open(callback: (err: NodeJS.ErrnoException, fd: number, k: () => void) => void) {
         var filePath = this.filePath;
 
         fs.open(filePath, 'r', null, function(err, fd) {
@@ -43,7 +43,7 @@ class WordNetFile {
             callback(err, fd, function() {fs.close(fd)});
         });
     }
-    static appendLineChar(fd, pos, buffPos, buff, callback) {
+    static appendLineChar(fd: number, pos: number, buffPos: number, buff: Buffer, callback: (s: string) => void) {
         if(buffPos >= buff.length) {
             var newBuff = new Buffer(buff.length * 2);
             buff.copy(newBuff, 0, 0, buff.length);

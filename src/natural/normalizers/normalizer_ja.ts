@@ -44,12 +44,18 @@
  * converters.katakanaToHiragana               「ひらがな」を「カタカナ」に変換
  */
 
-var flip = require('../util/utils.js').flip;
-var merge = require('../util/utils.js').merge;
-var replacer = require('../util/utils').replacer;
+import { flip, merge, replacer } from '../util/utils';
+
+interface ConversionTable {
+    fullwidthToHalfwidth: any;
+    halfwidthToFullwidth: any;
+    normalize: any;
+    katakanaToHiragana: any;
+    hiraganaToKatana: any;
+}
 
 // From http://fernweh.jp/b/mb_convert_kana_js/
-var conversionTables = {
+var conversionTables: ConversionTable = {
   fullwidthToHalfwidth: {
     alphabet: {
       'ａ': 'a',
@@ -257,7 +263,10 @@ var conversionTables = {
     }
   },
 
-  halfwidthToFullwidth: {}
+    halfwidthToFullwidth: {},
+    normalize: {},
+    katakanaToHiragana: {},
+    hiraganaToKatana: {},
 };
 
 var fixFullwidthKana = {
@@ -520,76 +529,70 @@ conversionTables.normalize = merge(
     conversionTables.halfwidthToFullwidth.katakana
     );
 
-var converters = {
-  fullwidthToHalfwidth: {
-    alphabet: replacer(conversionTables.fullwidthToHalfwidth.alphabet),
-    numbers: replacer(conversionTables.fullwidthToHalfwidth.numbers),
-    symbol: replacer(conversionTables.fullwidthToHalfwidth.symbol),
-    purePunctuation: replacer(conversionTables.fullwidthToHalfwidth.purePunctuation),
-    punctuation: replacer(conversionTables.fullwidthToHalfwidth.punctuation),
-    katakana: replacer(conversionTables.fullwidthToHalfwidth.katakana)
-  },
+export var converters = {
+    fullwidthToHalfwidth: {
+        alphabet: replacer(conversionTables.fullwidthToHalfwidth.alphabet),
+        numbers: replacer(conversionTables.fullwidthToHalfwidth.numbers),
+        symbol: replacer(conversionTables.fullwidthToHalfwidth.symbol),
+        purePunctuation: replacer(conversionTables.fullwidthToHalfwidth.purePunctuation),
+        punctuation: replacer(conversionTables.fullwidthToHalfwidth.punctuation),
+        katakana: replacer(conversionTables.fullwidthToHalfwidth.katakana)
+    },
 
-  halfwidthToFullwidth: {
-    alphabet: replacer(conversionTables.halfwidthToFullwidth.alphabet),
-    numbers: replacer(conversionTables.halfwidthToFullwidth.numbers),
-    symbol: replacer(conversionTables.halfwidthToFullwidth.symbol),
-    purePunctuation: replacer(conversionTables.halfwidthToFullwidth.purePunctuation),
-    punctuation: replacer(conversionTables.halfwidthToFullwidth.punctuation),
-    katakana: replacer(conversionTables.halfwidthToFullwidth.katakana)
-  },
+    halfwidthToFullwidth: {
+        alphabet: replacer(conversionTables.halfwidthToFullwidth.alphabet),
+        numbers: replacer(conversionTables.halfwidthToFullwidth.numbers),
+        symbol: replacer(conversionTables.halfwidthToFullwidth.symbol),
+        purePunctuation: replacer(conversionTables.halfwidthToFullwidth.purePunctuation),
+        punctuation: replacer(conversionTables.halfwidthToFullwidth.punctuation),
+        katakana: replacer(conversionTables.halfwidthToFullwidth.katakana)
+    },
 
-  fixFullwidthKana: replacer(fixFullwidthKana),
-  normalize: replacer(conversionTables.normalize)
+    fixFullwidthKana: replacer(fixFullwidthKana),
+    normalize: replacer(conversionTables.normalize),
+
+    /**
+     * Convert hiragana to fullwidth katakana.
+     * According to http://jsperf.com/converting-japanese, these implementations are
+     * faster than using lookup tables.
+     */
+    hiraganaToKatakana(str: string): string {
+        str = converters.halfwidthToFullwidth.katakana(str);
+        str = converters.fixFullwidthKana(str);
+
+        str = str.replace(/ゝ/g, 'ヽ');
+        str = str.replace(/ゞ/g, 'ヾ');
+        //str = str.replace(/?/g, '𛀀'); // Letter archaic E
+
+        str = str.replace(/[ぁ-ゖ]/g, function(str) {
+            return String.fromCharCode(str.charCodeAt(0) + 96);
+        });
+
+        return str;
+    },
+
+    /**
+     * Convert katakana to hiragana.
+     */
+    katakanaToHiragana(str: string): string {
+        str = converters.halfwidthToFullwidth.katakana(str);
+        str = converters.fixFullwidthKana(str);
+
+        str = str.replace(/ヽ/g, 'ゝ');
+        str = str.replace(/ヾ/g, 'ゞ');
+        //str = str.replace(/?/g, '𛀁'); // Letter archaic E
+
+        str = str.replace(/[ァ-ヶ]/g, function(str) {
+            return String.fromCharCode(str.charCodeAt(0) - 96);
+        });
+
+        return str;
+    }
 };
 
 var fixCompositeSymbols = replacer(fixCompositeSymbolsTable);
 
 
-/**
- * Convert hiragana to fullwidth katakana.
- * According to http://jsperf.com/converting-japanese, these implementations are
- * faster than using lookup tables.
- *
- * @param {string} str A string.
- * @return {string} A string not containing hiragana.
- */
-converters.hiraganaToKatakana = function(str) {
-  str = converters.halfwidthToFullwidth.katakana(str);
-  str = converters.fixFullwidthKana(str);
-
-  str = str.replace(/ゝ/g, 'ヽ');
-  str = str.replace(/ゞ/g, 'ヾ');
-  //str = str.replace(/?/g, '𛀀'); // Letter archaic E
-
-  str = str.replace(/[ぁ-ゖ]/g, function(str) {
-    return String.fromCharCode(str.charCodeAt(0) + 96);
-  });
-
-  return str;
-};
-
-
-/**
- * Convert katakana to hiragana.
- *
- * @param {string} str A string.
- * @return {string} A string not containing katakana.
- */
-converters.katakanaToHiragana = function(str) {
-  str = converters.halfwidthToFullwidth.katakana(str);
-  str = converters.fixFullwidthKana(str);
-
-  str = str.replace(/ヽ/g, 'ゝ');
-  str = str.replace(/ヾ/g, 'ゞ');
-  //str = str.replace(/?/g, '𛀁'); // Letter archaic E
-
-  str = str.replace(/[ァ-ヶ]/g, function(str) {
-    return String.fromCharCode(str.charCodeAt(0) - 96);
-  });
-
-  return str;
-};
 
 
 /**
@@ -601,11 +604,8 @@ converters.katakanaToHiragana = function(str) {
  * * Katakana to fullwidth
  * * Fix fullwidth kana
  * * Replace composite symbols
- *
- * @param {string} str
- * @return {string}
  */
-var normalize_ja = function(str) {
+export function normalize_ja(str: string): string {
   // Replace repeat characters.
   str = str
     .replace(/(..)々々/g, '$1$1')
@@ -619,6 +619,3 @@ var normalize_ja = function(str) {
 
   return str;
 };
-
-exports.normalize_ja = normalize_ja;
-exports.converters = converters;

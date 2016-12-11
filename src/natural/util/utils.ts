@@ -30,7 +30,7 @@
  * @param {Object.<string, string>} translationTable The translation table of key value.
  * @return {function(string): string} A translating function.
  */
-function replacer(translationTable) {
+export function replacer(translationTable) {
   /**
    * An array of translationTable keys.
    * @type {Array.<string>}
@@ -79,7 +79,7 @@ function replacer(translationTable) {
  * @param {Object.<string, string>} obj An object of strings.
  * @return {Object.<string, string>} An object of strings.
  */
-function flip(obj) {
+export function flip(obj) {
   var newObj = Object.create(null),
       key;
 
@@ -98,7 +98,7 @@ function flip(obj) {
  * @param {...Object.<string, string>} var_args One or more objects of strings.
  * @return {!Object.<string, string>} An object of strings.
  */
-function merge(var_args) {
+export function merge(...var_args: { [s: string]: string }[]): { [s: string]: string } {
   var args = [].slice.call(arguments),
       newObj = Object.create(null),
       id = 0, key;
@@ -113,7 +113,3 @@ function merge(var_args) {
 
   return newObj;
 }
-
-exports.replacer = replacer;
-exports.flip = flip;
-exports.merge = merge;

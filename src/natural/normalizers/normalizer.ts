@@ -27,7 +27,7 @@
  * It currently works off a conversion table and falls back to a set of rules.
  * Since it is applied first, the conversion table provides an "override" for the rules.
  **/
-var replacer = require('../util/utils').replacer;
+import { replacer } from '../util/utils';
 
 var conversionTable = {
 	"can't":"can not",
@@ -47,7 +47,7 @@ var rules = [
 ];
 
 // Accepts a list of tokens to expand.
-var normalize_tokens = function(tokens) {
+export function normalize_tokens(tokens) {
 	if(typeof tokens === "string") {
 		tokens = [tokens];
 	}
@@ -82,14 +82,3 @@ var normalize_tokens = function(tokens) {
 
 	return results;
 };
-
-
-
-
-
-// export the relevant stuff.
-exports.normalize_tokens = normalize_tokens;
-
-
-
-

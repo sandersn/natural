@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { _ } from "underscore";
+import _ = require("underscore");
 import { WordTokenizer as Tokenizer } from '../tokenizers/regexp_tokenizer';
 import { words as stopwords } from '../util/stopwords';
 import fs = require('fs');

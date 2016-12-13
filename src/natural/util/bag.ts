@@ -21,31 +21,35 @@
  */
 'use strict';
 
-function Bag() {
-    this.dictionary = [];
-    this.nElement = 0;
-};
+class Bag<T> {
+    dictionary: T[];
+    nElement: number;
+    constructor() {
+        this.dictionary = [];
+        this.nElement = 0;
+    }
 
-Bag.prototype.add = function(element) {
-    this.dictionary.push(element);
-    this.nElement++;
-    return this;
-};
+    add(element: T) {
+        this.dictionary.push(element);
+        this.nElement++;
+        return this;
+    };
 
-Bag.prototype.isEmpty = function() {
-    return this.nElement > 0;
-};
+    isEmpty() {
+        return this.nElement > 0;
+    };
 
-Bag.prototype.contains = function(item) {
-    return this.dictionary.indexOf(item) >= 0;
-};
+    contains(item: T) {
+        return this.dictionary.indexOf(item) >= 0;
+    };
 
-/**
- * unpack the bag , and get all items
- */
-Bag.prototype.unpack = function() {
-    // return a copy is better than original
-    return this.dictionary.slice();
-};
+    /**
+     * unpack the bag , and get all items
+     */
+    unpack() {
+        // return a copy is better than original
+        return this.dictionary.slice();
+    };
+}
 
 export = Bag;

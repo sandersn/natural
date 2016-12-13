@@ -24,89 +24,94 @@
 import util = require('util');
 import Bag = require('./bag');
 
-var DirectedEdge = function(start, end, weight) {
-    this.start = start;
-    this.end = end;
-    this.weight = weight;
-};
-
-DirectedEdge.prototype.weight = function() {
-    return this.weight;
-};
-
-DirectedEdge.prototype.from = function() {
-    return this.start;
-};
-
-DirectedEdge.prototype.to = function() {
-    return this.end;
-};
-
-DirectedEdge.prototype.toString = function() {
-    return util.format('%s -> %s, %s', this.start, this.end, this.weight);
-};
-
-var EdgeWeightedDigraph = function() {
-    this.edgesNum = 0;
-    this.adj = []; // adjacency list
-};
-
-/**
- * the number of vertexs saved.
- */
-EdgeWeightedDigraph.prototype.v = function() {
-    return this.adj.length;
-};
-
-/**
- * the number of edges saved.
- */
-EdgeWeightedDigraph.prototype.e = function() {
-    return this.edgesNum;
-};
-
-EdgeWeightedDigraph.prototype.add = function(start, end, weight) {
-    var e = new DirectedEdge(start, end, weight);
-    this.addEdge(e);
-};
-
-EdgeWeightedDigraph.prototype.addEdge = function(e) {
-    if(!this.adj[e.from()]) {
-        this.adj[e.from()] = new Bag();
+class DirectedEdge {
+    start: number;
+    end: number;
+    weight: number;
+    constructor(start: number, end: number, weight: number) {
+        this.start = start;
+        this.end = end;
+        this.weight = weight;
     }
-    this.adj[e.from()].add(e);
-    this.edgesNum++;
-};
 
-/**
- * use callback on all edges from v.
- */
-EdgeWeightedDigraph.prototype.getAdj = function(v) {
-    if(!this.adj[v]) return [];
-    return this.adj[v].unpack();
-};
-
-/**
- * use callback on all edges.
- */
-EdgeWeightedDigraph.prototype.edges = function() {
-    var adj = this.adj;
-    var list = new Bag();
-    for(var i in adj) {
-        adj[i].unpack().forEach(function(item) {
-            list.add(item);
-        });
+    from() {
+        return this.start;
     }
-    return list.unpack();
-};
 
-EdgeWeightedDigraph.prototype.toString = function() {
-    var result = [];
-    var list = this.edges();
-    list.forEach(function(edge) {
-        result.push(edge.toString());
-    });
-    return result.join('\n');
-};
+    to() {
+        return this.end;
+    }
+
+    toString() {
+        return util.format('%s -> %s, %s', this.start, this.end, this.weight);
+    }
+}
+
+class EdgeWeightedDigraph {
+    edgesNum: number;
+    adj: Bag<DirectedEdge>[];
+
+    constructor() {
+        this.edgesNum = 0;
+        this.adj = []; // adjacency list
+    }
+
+    /**
+     * the number of vertexs saved.
+     */
+    v() {
+        return this.adj.length;
+    };
+
+    /**
+     * the number of edges saved.
+     */
+    e() {
+        return this.edgesNum;
+    };
+
+    add(start: number, end: number, weight: number) {
+        this.addEdge(new DirectedEdge(start, end, weight));
+    };
+
+    private addEdge(e: DirectedEdge) {
+        if(!this.adj[e.from()]) {
+            this.adj[e.from()] = new Bag<DirectedEdge>();
+        }
+        this.adj[e.from()].add(e);
+        this.edgesNum++;
+    };
+
+    /**
+     * use callback on all edges from v.
+     */
+    getAdj(v: number) {
+        if(!this.adj[v]) return [];
+        return this.adj[v].unpack();
+    };
+
+    /**
+     * use callback on all edges.
+     */
+    edges() {
+        var adj = this.adj;
+        var list = new Bag();
+        for(var i in adj) {
+            adj[i].unpack().forEach(function(item) {
+                list.add(item);
+            });
+        }
+        return list.unpack();
+    };
+
+    toString() {
+        var result = [];
+        var list = this.edges();
+        for (const edge of list) {
+            result.push(edge.toString());
+        }
+        return result.join('\n');
+    };
+}
 
 export = EdgeWeightedDigraph;

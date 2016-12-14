@@ -26,14 +26,14 @@ import Tokenizer = require('../tokenizers/aggressive_tokenizer_ru');
 export = function() {
     var stemmer = this;
 
-    stemmer.stem = function(token) {
+    stemmer.stem = function(token: string) {
         return token;
     };
 
-    stemmer.tokenizeAndStem = function(text, keepStops) {
+    stemmer.tokenizeAndStem = function(text: string, keepStops: boolean) {
         var stemmedTokens = [];
         
-        new Tokenizer().tokenize(text).forEach(function(token) {
+        for (const token of new Tokenizer().tokenize(text)) {
             if (keepStops || stopwords.words.indexOf(token) == -1) {
                 var resultToken = token.toLowerCase();
                 if (resultToken.match(new RegExp('[а-яё0-9]+', 'gi'))) {
@@ -41,17 +41,17 @@ export = function() {
                 }
                 stemmedTokens.push(resultToken);
             }
-        });
+        }
         
         return stemmedTokens;
     };
 
     stemmer.attach = function() {
-        (String.prototype as any).stem = function() {
+        (String.prototype as any).stem = function(this: string) {
             return stemmer.stem(this);
         };
         
-        (String.prototype as any).tokenizeAndStem = function(keepStops) {
+        (String.prototype as any).tokenizeAndStem = function(this: string, keepStops: string) {
             return stemmer.tokenizeAndStem(this, keepStops);
         };
     };

@@ -26,8 +26,13 @@ import { words as stopwords } from '../util/stopwords';
 import fs = require('fs');
 var tokenizer = new Tokenizer();
 
-function buildDocument(text, key) {
-    var stopOut;
+type Document = {
+    __key: number;
+    [s: string]: number
+};
+
+function buildDocument(text: string | string[] | Document, key: number) {
+    var stopOut: boolean;
 
     if(typeof text === 'string') {
         text = tokenizer.tokenize(text.toLowerCase());
@@ -37,7 +42,7 @@ function buildDocument(text, key) {
         return text;
     }
 
-    return text.reduce(function(document, term) {
+    return text.reduce(function (document: Document, term: string) {
         // next line solves https://github.com/NaturalNode/natural/issues/119
         if(typeof document[term] === 'function') document[term] = 0;
         if(!stopOut || stopwords.indexOf(term) < 0)
@@ -46,14 +51,14 @@ function buildDocument(text, key) {
     }, {__key: key});
 }
 
-function documentHasTerm(term, document) {
+function documentHasTerm(term: string, document: Document) {
     return document[term] && document[term] > 0;
 }
 
 class TfIdf {
-    documents;
+    documents: Document[];
     _idfCache: { [s: string]: any };
-    constructor(deserialized) {
+    constructor(deserialized: TfIdf) {
         if(deserialized)
             this.documents = deserialized.documents;
         else
@@ -62,11 +67,11 @@ class TfIdf {
         this._idfCache = {};
     }
 
-    static tf(term, document) {
+    static tf(term: string, document: Document) {
         return document[term] ? document[term]: 0;
     }
 
-    idf(term, force?: boolean) {
+    idf(term: string, force?: boolean) {
 
         // Lookup the term in the New term-IDF caching,
         // this will cut search times down exponentially on large document sets.
@@ -86,7 +91,7 @@ class TfIdf {
 
     // If restoreCache is set to true, all terms idf scores currently cached will be recomputed.
     // Otherwise, the cache will just be wiped clean
-    addDocument(document, key, restoreCache) {
+    addDocument(document: string | string[], key: number, restoreCache: boolean) {
         this.documents.push(buildDocument(document, key));
 
         // make sure the cache is invalidated when new documents arrive
@@ -104,7 +109,7 @@ class TfIdf {
 
     // If restoreCache is set to true, all terms idf scores currently cached will be recomputed.
     // Otherwise, the cache will just be wiped clean
-    addFileSync(path, encoding, key, restoreCache) {
+    addFileSync(path: string, encoding: string, key: number, restoreCache: boolean) {
         if(!encoding)
             encoding = 'utf8';
         if(!isEncoding(encoding))
@@ -127,7 +132,7 @@ class TfIdf {
         }
     };
 
-    tfidf(terms, d) {
+    tfidf(terms: string | string[], d: number) {
         var _this = this;
 
         if(!_.isArray(terms))
@@ -140,7 +145,7 @@ class TfIdf {
         }, 0.0);
     };
 
-    listTerms(d) {
+    listTerms(d: number) {
         var terms = [];
 
         for(var term in this.documents[d]) {
@@ -151,8 +156,8 @@ class TfIdf {
         return terms.sort(function(x, y) { return y.tfidf - x.tfidf; });
     };
 
-    tfidfs(terms, callback) {
-        var tfidfs = new Array(this.documents.length);
+    tfidfs(terms: string | string[], callback: (i: number, x: number, key: number) => void) {
+        var tfidfs: number[] = new Array(this.documents.length);
 
         for(var i = 0; i < this.documents.length; i++) {
             tfidfs[i] = this.tfidf(terms, i);
@@ -165,7 +170,7 @@ class TfIdf {
     };
 
     // Define a tokenizer other than the default "WordTokenizer"
-    setTokenizer(t) {
+    setTokenizer(t: Tokenizer) {
         if(!_.isFunction(t.tokenize))
             throw new Error('Expected a valid Tokenizer');
         tokenizer = t;
@@ -177,7 +182,7 @@ class TfIdf {
 
 
 // backwards compatibility for < node 0.10
-function isEncoding(encoding) {
+function isEncoding(encoding: string) {
     if (typeof Buffer.isEncoding !== 'undefined')
         return Buffer.isEncoding(encoding);
     switch ((encoding + '').toLowerCase()) {

@@ -21,7 +21,7 @@
  */
 'use strict';
 
-import { EdgeWeightedDigraph } from './edge_weighted_digraph';
+import { EdgeWeightedDigraph, DirectedEdge } from './edge_weighted_digraph';
 import Topological = require('./topological');
 
 /**
@@ -33,68 +33,72 @@ import Topological = require('./topological');
   *  constant time and the pathTo() method takes time proportional to the
   *  number of edges in the longest path returned.
   */
-var ShortestPathTree = function(digraph, start) {
-    var _this = this;
-    this.edgeTo = [];
-    this.distTo = [];
-    this.distTo[start] = 0.0;
-    this.start = start;
-    this.top = new Topological(digraph);
-    this.top.order().forEach(function(vertex){
-        _this.relaxVertex(digraph, vertex, _this);
-    });
-};
+class ShortestPathTree {
+    edgeTo: DirectedEdge[];
+    distTo: number[];
+    start: number;
+    top: Topological;
+    constructor(digraph: EdgeWeightedDigraph, start: number) {
+        var _this = this;
+        this.edgeTo = [];
+        this.distTo = [];
+        this.distTo[start] = 0.0;
+        this.start = start;
+        this.top = new Topological(digraph);
+        this.top.order().forEach(function(vertex){
+            _this.relaxVertex(digraph, vertex, _this);
+        });
+    }
 
-ShortestPathTree.prototype.relaxEdge = function(e) {
-    var distTo = this.distTo,
+    relaxEdge(e: DirectedEdge) {
+        var distTo = this.distTo,
         edgeTo = this.edgeTo;
-    var v = e.from(), w = e.to();
-    if (distTo[w] > distTo[v] + e.weight) {
-        distTo[w] = distTo[v] + e.weight;
-        edgeTo[w] = e;
-    }
-};
-
-/**
- * relax a vertex v in the specified digraph g
- * @param {EdgeWeightedDigraph} the apecified digraph
- * @param {Vertex} v vertex to be relaxed
- */
-ShortestPathTree.prototype.relaxVertex = function(digraph, vertex, tree) {
-    var distTo = tree.distTo;
-    var edgeTo = tree.edgeTo;
-    digraph.getAdj(vertex).forEach(function(edge){
-        var w = edge.to();
-        distTo[w] = /\d/.test(distTo[w]) ? distTo[w] : Number.MAX_VALUE;
-        distTo[vertex] = distTo[vertex] || 0;
-        if (distTo[w] > distTo[vertex] + edge.weight) {
-            // in case of the result of 0.28+0.34 is 0.62000001
-            distTo[w] = parseFloat((distTo[vertex] + edge.weight).toFixed(2));
-            edgeTo[w] = edge;
+        var v = e.from(), w = e.to();
+        if (distTo[w] > distTo[v] + e.weight) {
+            distTo[w] = distTo[v] + e.weight;
+            edgeTo[w] = e;
         }
-    });
+    };
 
-};
+    /**
+     * relax a vertex v in the specified digraph g
+     */
+    relaxVertex(digraph: EdgeWeightedDigraph, vertex: number, tree: ShortestPathTree) {
+        var distTo = tree.distTo;
+        var edgeTo = tree.edgeTo;
+        digraph.getAdj(vertex).forEach(function(edge){
+            var w = edge.to();
+            distTo[w] = /\d/.test(distTo[w] as any) ? distTo[w] : Number.MAX_VALUE;
+            distTo[vertex] = distTo[vertex] || 0;
+            if (distTo[w] > distTo[vertex] + edge.weight) {
+                // in case of the result of 0.28+0.34 is 0.62000001
+                distTo[w] = parseFloat((distTo[vertex] + edge.weight).toFixed(2));
+                edgeTo[w] = edge;
+            }
+        });
 
-ShortestPathTree.prototype.getDistTo = function(v) {
-    return this.distTo[v];
-};
+    };
 
-ShortestPathTree.prototype.hasPathTo = function(v) {
-    var dist = this.distTo[v];
-    if(v == this.start) return false;
-    return /\d/.test(dist) ? dist != Number.MAX_VALUE : false;
-};
-
-ShortestPathTree.prototype.pathTo = function(v) {
-    if (!this.hasPathTo(v) || v == this.start) return [];
-    var path = [];
-    var edgeTo = this.edgeTo;
-    for (var e = edgeTo[v]; !!e; e = edgeTo[e.from()]) {
-        path.push(e.to());
+    getDistTo(v: number) {
+        return this.distTo[v];
     }
-    path.push(this.start);
-    return path.reverse();
-};
+
+    hasPathTo(v: number) {
+        var dist = this.distTo[v];
+        if(v == this.start) return false;
+        return /\d/.test(dist.toString()) ? dist != Number.MAX_VALUE : false;
+    }
+
+    pathTo(v: number) {
+        if (!this.hasPathTo(v) || v == this.start) return [];
+        var path = [];
+        var edgeTo = this.edgeTo;
+        for (var e = edgeTo[v]; !!e; e = edgeTo[e.from()]) {
+            path.push(e.to());
+        }
+        path.push(this.start);
+        return path.reverse();
+    }
+}
 
 export = ShortestPathTree;

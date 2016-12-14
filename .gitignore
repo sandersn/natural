@@ -10,3 +10,4 @@ lib
 *.adj
 *.adv
 npm-debug.log
+/.vs

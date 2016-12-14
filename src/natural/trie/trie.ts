@@ -37,7 +37,7 @@ class Trie {
      * Add a single string to the TRIE, returns true if the word was already in the 
      * trie.
      **/
-    addString(string) {
+    addString(string: string) {
         if(this.cs === false) {
             string = string.toLowerCase();
         }
@@ -64,7 +64,7 @@ class Trie {
     /**
      * Add multiple strings to the TRIE
      **/
-    addStrings(list) {
+    addStrings(list: string[]) {
         for(var i in list) {
             this.addString(list[i]);
         }
@@ -79,23 +79,23 @@ class Trie {
      * we will get :
      * [a, ab, abc, abd]
      **/
-    keysWithPrefix(prefix) {
+    keysWithPrefix(prefix: string) {
         if(this.cs === false) {
             prefix = prefix.toLowerCase();
         }
 
-        function isEmpty (object) {
+        function isEmpty(object: { [s: string]: any }) {
             for (var key in object) if (object.hasOwnProperty(key)) return false;
             return true;
         }
 
-        function get (node, word) {
+        function get(node: Trie, word: string): Trie | null {
             if(!node) return null;
             if(word.length == 0) return node;
             return get(node.dictionary[word[0]], word.substring(1));
         }
 
-        function recurse ( node, stringAgg, resultsAgg) {
+        function recurse(node: Trie, stringAgg: string, resultsAgg: string[]): void {
             if (!node) return;
 
             // Check if this is a word
@@ -112,7 +112,7 @@ class Trie {
             }
         }
 
-        var results = [];
+        var results: string[] = [];
         recurse (get(this, prefix), prefix, results);
         return results;
     };
@@ -121,7 +121,7 @@ class Trie {
      * A function to search the given string and return true if it lands
      * on on a word. Essentially testing if the word exists in the database.
      **/
-    contains(string) {
+    contains(string: string) {
         if(this.cs === false) {
             string = string.toLowerCase();
         }
@@ -152,12 +152,12 @@ class Trie {
      * we would get only:
      * [a, ab, abc]
      **/
-    findMatchesOnPath(search) {
+    findMatchesOnPath(search: string) {
         if(this.cs === false) {
             search = search.toLowerCase();
         }
 
-        function recurse(node, search, stringAgg, resultsAgg) {
+        function recurse(node: Trie, search: string, stringAgg: string, resultsAgg: string[]): string[] {
             // Check if this is a word.
             if(node.$) {
                 resultsAgg.push(stringAgg);
@@ -183,12 +183,12 @@ class Trie {
      * Returns the longest match and the remaining part that could not be matched.
      * inspired by [NLTK containers.trie.find_prefix](http://nltk.googlecode.com/svn-/trunk/doc/api/nltk.containers.Trie-class.html).
      **/
-    findPrefix(search) {
+    findPrefix(search: string) {
         if(this.cs === false) {
             search = search.toLowerCase();
         }
         
-        function recurse(node, search, stringAgg, lastWord) {
+        function recurse(node: Trie, search: string, stringAgg: string, lastWord: string): [string, string] {
             // Check if this is a word
             if(node.$) {
                 lastWord = stringAgg;

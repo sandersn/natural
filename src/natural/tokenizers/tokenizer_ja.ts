@@ -62,56 +62,56 @@ import normalizer_ja = require('../normalizers/normalizer_ja')
 const normalize = normalizer_ja.normalize_ja;
 
 
-
+type NumberMap = { [s: string]: number };
 /**
  * @constructor
  */
 class TokenizerJa extends Tokenizer {
-    chartype_;
-    BIAS__;
-    UP1__;
-    UP2__;
-    UP3__;
-    BP1__;
-    BP2__;
-    UW1__;
-    UW2__;
-    UW3__;
-    UW4__;
-    UW5__;
-    UW6__;
-    BW1__;
-    BW2__;
-    BW3__;
-    TW1__;
-    TW2__;
-    TW3__;
-    TW4__;
-    UC1__;
-    UC2__;
-    UC3__;
-    UC4__;
-    UC5__;
-    UC6__;
-    BC1__;
-    BC2__;
-    BC3__;
-    TC1__;
-    TC2__;
-    TC3__;
-    TC4__;
-    TC5__;
-    UQ1__;
-    UQ2__;
-    UQ3__;
-    BQ1__;
-    BQ2__;
-    BQ3__;
-    BQ4__;
-    TQ1__;
-    TQ2__;
-    TQ3__;
-    TQ4__;
+    chartype_: [RegExp, string][];
+    BIAS__: number;
+    UP1__: NumberMap;
+    UP2__: NumberMap;
+    UP3__: NumberMap;
+    BP1__: NumberMap;
+    BP2__: NumberMap;
+    UW1__: NumberMap;
+    UW2__: NumberMap;
+    UW3__: NumberMap;
+    UW4__: NumberMap;
+    UW5__: NumberMap;
+    UW6__: NumberMap;
+    BW1__: NumberMap;
+    BW2__: NumberMap;
+    BW3__: NumberMap;
+    TW1__: NumberMap;
+    TW2__: NumberMap;
+    TW3__: NumberMap;
+    TW4__: NumberMap;
+    UC1__: NumberMap;
+    UC2__: NumberMap;
+    UC3__: NumberMap;
+    UC4__: NumberMap;
+    UC5__: NumberMap;
+    UC6__: NumberMap;
+    BC1__: NumberMap;
+    BC2__: NumberMap;
+    BC3__: NumberMap;
+    TC1__: NumberMap;
+    TC2__: NumberMap;
+    TC3__: NumberMap;
+    TC4__: NumberMap;
+    TC5__: NumberMap;
+    UQ1__: NumberMap;
+    UQ2__: NumberMap;
+    UQ3__: NumberMap;
+    BQ1__: NumberMap;
+    BQ2__: NumberMap;
+    BQ3__: NumberMap;
+    BQ4__: NumberMap;
+    TQ1__: NumberMap;
+    TQ2__: NumberMap;
+    TQ3__: NumberMap;
+    TQ4__: NumberMap;
     constructor() {
         super();
         this.chartype_ = [
@@ -181,7 +181,7 @@ class TokenizerJa extends Tokenizer {
     };
 
 
-    private ts_(v: string) {
+    private ts_(v: number | undefined) {
         if (v) { return v; }
         return 0;
     };

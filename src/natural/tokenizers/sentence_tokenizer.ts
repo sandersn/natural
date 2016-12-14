@@ -23,7 +23,7 @@ THE SOFTWARE.
 import Tokenizer = require('./tokenizer');
 
 class SentenceTokenizer extends Tokenizer {
-    tokenize(text) {
+    tokenize(text: string) {
         // break string up in to sentences based on punctation and quotation marks
         var tokens = text.match(/([\"\'\‘\“\'\"\[\(\{\⟨][^\.\?\!]+[\.\?\!][\"\'\’\”\'\"\]\)\}\⟩]|[^\.\?\!]+[\.\?\!])\s?/g);
 

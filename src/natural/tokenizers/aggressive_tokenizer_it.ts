@@ -23,7 +23,7 @@ THE SOFTWARE.
 import Tokenizer = require("./tokenizer");
 
 class AggressiveTokenizer extends Tokenizer {
-    tokenize(text) {
+    tokenize(text: string) {
         // break a string up into an array of tokens by anything non-word
         return this.trim(text.split(/\W+/));
     }

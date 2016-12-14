@@ -23,14 +23,20 @@ THE SOFTWARE.
 import Tokenizer = require('./tokenizer');
 import _ = require('underscore');
 
+interface RegexpOptions {
+    pattern?: string | RegExp;
+    discardEmpty?: boolean;
+    gaps?: boolean;
+}
+
 // Base Class for RegExp Matching
 export class RegexpTokenizer extends Tokenizer {
-    _pattern;
-    discardEmpty;
-    _gaps;
-    constructor(options) {
+    _pattern: string | RegExp;
+    discardEmpty: boolean;
+    _gaps: boolean;
+    constructor(options: RegexpOptions) {
         super();
-        var options = options || {};
+        options = options || {};
         this._pattern = options.pattern || this._pattern;
         this.discardEmpty = options.discardEmpty || true;
 
@@ -42,14 +48,14 @@ export class RegexpTokenizer extends Tokenizer {
         }
     }
 
-    tokenize(s) {
+    tokenize(s: string) {
         var results;
 
         if (this._gaps) {
-            results = s.split(this._pattern);
+            results = typeof this._pattern === "string" ? s.split(this._pattern) : s.split(this._pattern);
             return (this.discardEmpty) ? _.without(results,'',' ') : results;
         } else {
-            return s.match(this._pattern);
+            return typeof this._pattern === "string" ? s.match(this._pattern) : s.match(this._pattern);
         }
     }
 }
@@ -63,7 +69,7 @@ export class RegexpTokenizer extends Tokenizer {
  * 
  */
 export class WordTokenizer extends RegexpTokenizer {
-    constructor(options?) {
+    constructor(options?: RegexpOptions) {
         super(options);
         this._pattern = /[^A-Za-zА-Яа-я0-9_]+/;
     }
@@ -78,7 +84,7 @@ export class WordTokenizer extends RegexpTokenizer {
  * 
  */
 export class WordPunctTokenizer extends RegexpTokenizer {
-    constructor(options) {
+    constructor(options: RegexpOptions) {
         super(options);
         this._pattern = new RegExp(/(\w+|[а-я0-9_]+|\.|\!|\'|\"")/i);
     };

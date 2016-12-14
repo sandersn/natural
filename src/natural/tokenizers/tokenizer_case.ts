@@ -31,13 +31,13 @@ class CaseTokenizer extends Tokenizer {
     attach() {
         var self = this;
 
-        (String.prototype as any).tokenize = function(preserveApostrophe) {
+        (String.prototype as any).tokenize = function(this: string, preserveApostrophe: boolean) {
             return self.tokenize(this, preserveApostrophe);
         }
     }
 
     // Idea from Seagull: http://stackoverflow.com/a/26482650
-    tokenize (text, preserveApostrophe) {
+    tokenize (text: string, preserveApostrophe: boolean) {
         var whitelist = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
         var lower = text.toLowerCase();
         var upper = text.toUpperCase();

@@ -23,11 +23,11 @@ THE SOFTWARE.
 import Tokenizer = require("./tokenizer");
 
 class AggressiveTokenizer extends Tokenizer {
-    withoutEmpty(array) {
+    withoutEmpty(array: string[]) {
         return array.filter(a => a);
     }
 
-    tokenize(text) {
+    tokenize(text: string) {
         // break a string up into an array of tokens by anything non-word
         return this.withoutEmpty(this.trim(text.split(/[^a-zA-Zà-úÀ-Ú]/)));
     }

@@ -42,7 +42,7 @@ var contractions3 = [
 ];
 
 class TreebankWordTokenizer extends Tokenizer {
-    tokenize(text) {
+    tokenize(text: string) {
         contractions2.forEach(function(regexp) {
             text = text.replace(regexp,"$1 $2");
         });

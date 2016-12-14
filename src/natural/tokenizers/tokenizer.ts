@@ -25,7 +25,7 @@ THE SOFTWARE.
  */
 
 class Tokenizer {
-    trim(array) {
+    trim(array: string[]) {
         while (array[array.length - 1] == '')
             array.pop();
 
@@ -39,12 +39,12 @@ class Tokenizer {
     attach() {
         var self = this;
 
-        (String.prototype as any).tokenize = function() {
+        (String.prototype as any).tokenize = function(this: string) {
             return self.tokenize(this);
         }
     }
 
-    tokenize(text, preserveApostrophe?) {}
+    tokenize(text: string, preserveApostrophe?: boolean) {}
 }
 
 export = Tokenizer;

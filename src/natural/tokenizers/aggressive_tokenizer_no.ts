@@ -24,7 +24,7 @@ import Tokenizer = require("./tokenizer");
 import normalizer = require('../normalizers/normalizer_no');
 
 class AggressiveTokenizer extends Tokenizer {
-    tokenize(text) {
+    tokenize(text: string) {
         text = normalizer.remove_diacritics(text);
 
         // break a string up into an array of tokens by anything non-word

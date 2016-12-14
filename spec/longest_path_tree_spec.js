@@ -23,7 +23,7 @@
 
 var LPT = require('../lib/natural/util/longest_path_tree'),
     Topological = require('../lib/natural/util/topological'),
-    EdgeWeightedDigraph = require('../lib/natural/util/edge_weighted_digraph');
+    EdgeWeightedDigraph = require('../lib/natural/util/edge_weighted_digraph').EdgeWeightedDigraph;
 
 describe("shortest path tree", function() {
     var digraph = new EdgeWeightedDigraph();

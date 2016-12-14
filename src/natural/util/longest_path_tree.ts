@@ -21,7 +21,7 @@
  */
 'use strict';
 
-import EdgeWeightedDigraph = require('./edge_weighted_digraph');
+import { EdgeWeightedDigraph } from './edge_weighted_digraph';
 import Topological = require('./topological');
 
 /**

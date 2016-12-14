@@ -21,14 +21,15 @@
  */
 'use strict';
 
+import { EdgeWeightedDigraph, DirectedEdge } from "./edge_weighted_digraph";
+
 /**
  * a topo sort for a digraph
- * @param {Digraph}
  */
 class Topological {
     isDag: boolean;
     sorted: any[];
-    constructor(g) {
+    constructor(g: EdgeWeightedDigraph) {
         this.isDag = true;
         this.sorted = topoSort(uniqueVertexs(g.edges()), g.edges());
     }
@@ -40,27 +41,23 @@ class Topological {
     /**
      * get ordered vertexs of digraph
      */
-    order = function() {
+    order() {
         return this.sorted.slice();
     };
 }
 
-/**
- * @param {Array} all vertex in digraph
- * @param {Object} all edges in the digraph
- */
-function topoSort(vertexs, edges) {
-    var sorted = [];
-    var cursor = vertexs.length,
-        visited = {},
-        i = cursor;
+function topoSort(vertexs: number[], edges: DirectedEdge[]) {
+    var sorted: number[] = [];
+    var cursor = vertexs.length;
+    var visited: { [n: number]: boolean } = {};
+    var i = cursor;
     while (i--) {
         if (!visited[i]) visit(vertexs[i], i, []);
     }
 
     return sorted.reverse();
 
-    function visit(vertex, i, predecessors) {
+    function visit(vertex: number, i: number, predecessors: number[]) {
         if(predecessors.indexOf(vertex) >= 0) {
             throw new Error('Cyclic dependency:' + JSON.stringify(vertex));
         }
@@ -72,7 +69,7 @@ function topoSort(vertexs, edges) {
             return edge.to() === vertex;
         });
 
-        var preds = [];
+        var preds: number[] = [];
         if(outgoing.length > 0) {
             preds = predecessors.concat(vertex);
         }
@@ -87,15 +84,15 @@ function topoSort(vertexs, edges) {
 };
 
 
-function uniqueVertexs(edges) {
+function uniqueVertexs(edges: DirectedEdge[]) {
     var vertexs = [];
     var from, to;
-    edges.forEach(function(edge) {
+    for (const edge of edges) {
         from = edge.from();
         to = edge.to();
         if (vertexs.indexOf(from) < 0) vertexs.push(from);
         if (vertexs.indexOf(to) < 0) vertexs.push(to);
-    });
+    }
     return vertexs;
 };
 

@@ -24,7 +24,7 @@
 import util = require('util');
 import Bag = require('./bag');
 
-class DirectedEdge {
+export class DirectedEdge {
     start: number;
     end: number;
     weight: number;
@@ -47,7 +47,7 @@ class DirectedEdge {
     }
 }
 
-class EdgeWeightedDigraph {
+export class EdgeWeightedDigraph {
     edgesNum: number;
     adj: Bag<DirectedEdge>[];
 
@@ -95,7 +95,7 @@ class EdgeWeightedDigraph {
      */
     edges() {
         var adj = this.adj;
-        var list = new Bag();
+        var list = new Bag<DirectedEdge>();
         for(var i in adj) {
             adj[i].unpack().forEach(function(item) {
                 list.add(item);
@@ -113,5 +113,3 @@ class EdgeWeightedDigraph {
         return result.join('\n');
     };
 }
-
-export = EdgeWeightedDigraph;

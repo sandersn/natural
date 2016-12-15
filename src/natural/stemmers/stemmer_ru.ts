@@ -23,21 +23,19 @@ THE SOFTWARE.
 import stopwords = require('../util/stopwords_ru');
 import Tokenizer = require('../tokenizers/aggressive_tokenizer_ru');
 
-export = function() {
-    var stemmer = this;
-
-    stemmer.stem = function(token: string) {
+class Stemmer_Ru {
+    stem(token: string) {
         return token;
     };
 
-    stemmer.tokenizeAndStem = function(text: string, keepStops: boolean) {
+    tokenizeAndStem(text: string, keepStops: boolean) {
         var stemmedTokens = [];
         
         for (const token of new Tokenizer().tokenize(text)) {
             if (keepStops || stopwords.words.indexOf(token) == -1) {
                 var resultToken = token.toLowerCase();
                 if (resultToken.match(new RegExp('[а-яё0-9]+', 'gi'))) {
-                    resultToken = stemmer.stem(resultToken);
+                    resultToken = this.stem(resultToken);
                 }
                 stemmedTokens.push(resultToken);
             }
@@ -46,13 +44,16 @@ export = function() {
         return stemmedTokens;
     };
 
-    stemmer.attach = function() {
+    attach() {
+        var stemmer = this;
         (String.prototype as any).stem = function(this: string) {
             return stemmer.stem(this);
         };
         
-        (String.prototype as any).tokenizeAndStem = function(this: string, keepStops: string) {
+        (String.prototype as any).tokenizeAndStem = function(this: string, keepStops: boolean) {
             return stemmer.tokenizeAndStem(this, keepStops);
         };
     };
 }
+
+export = Stemmer_Ru;

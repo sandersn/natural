@@ -19,47 +19,45 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+'use strict';
 
 import stopwords = require('../util/stopwords_pt');
 import Tokenizer = require('../tokenizers/aggressive_tokenizer_pt');
-export = function () {
-    'use strict';
-
-    var Stemmer = this;
-
-    Stemmer.stem = function (token) {
+class Stemmer_Pt {
+    stem(token: string) {
         return token;
     };
 
-    Stemmer.addStopWords = function (word) {
+    addStopWord(word: string) {
         stopwords.words.push(word);
     };
 
-    Stemmer.addStopWords = function (words) {
+    addStopWords(words: string[]) {
         stopwords.words = stopwords.words.concat(words);
     };
 
-    Stemmer.tokenizeAndStem = function(text, keepStops) {
+    tokenizeAndStem(text: string, keepStops: boolean) {
         var stemmedTokens = [];
 
-        var tokenStemmer = function (token) {
+        for (const token of new Tokenizer().tokenize(text)) {
             if (keepStops || stopwords.words.indexOf(token.toLowerCase()) === -1) {
                 stemmedTokens.push(Stemmer.stem(token));
             }
-        };
-
-        new Tokenizer().tokenize(text).forEach(tokenStemmer);
+        }
 
         return stemmedTokens;
     };
 
-    Stemmer.attach = function () {
-        (String.prototype as any).stem = function () {
+    attach() {
+        var Stemmer = this;
+        (String.prototype as any).stem = function (this: string) {
             return Stemmer.stem(this);
         };
 
-        (String.prototype as any).tokenizeAndStem = function (keepStops) {
+        (String.prototype as any).tokenizeAndStem = function (this: string, keepStops: boolean) {
             return Stemmer.tokenizeAndStem(this, keepStops);
         };
     };
 };
+
+export = Stemmer_Pt;

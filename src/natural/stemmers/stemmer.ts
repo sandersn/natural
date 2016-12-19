@@ -23,26 +23,24 @@ THE SOFTWARE.
 import stopwords = require('../util/stopwords');
 import Tokenizer = require('../tokenizers/aggressive_tokenizer');
 
-export = function() {
-    var stemmer = this;
-
-    stemmer.stem = function(token) {
+class Stemmer {
+    stem(token: string) {
         return token;
     };
 
-    stemmer.addStopWord = function(stopWord) {
+    addStopWord(stopWord: string) {
         stopwords.words.push(stopWord);
     };
 
-    stemmer.addStopWords = function(moreStopWords) {
+    addStopWords(moreStopWords: string[]) {
         stopwords.words = stopwords.words.concat(moreStopWords);
     };
 
-    stemmer.removeStopWord = function(stopWord) {
+    removeStopWord(stopWord: string) {
         this.removeStopWords([stopWord])
     };
 
-    stemmer.removeStopWords = function(moreStopWords) {
+    removeStopWords(moreStopWords: string[]) {
         moreStopWords.forEach(function(stopWord){
             var idx = stopwords.words.indexOf(stopWord);
             if (idx >= 0) {
@@ -53,34 +51,37 @@ export = function() {
     };
 
 
-    stemmer.tokenizeAndStem = function(text, keepStops) {
+    tokenizeAndStem(text: string, keepStops: boolean) {
         var stemmedTokens = [];
         var lowercaseText = text.toLowerCase();
         var tokens = new Tokenizer().tokenize(lowercaseText);
 
         if (keepStops) {
-            tokens.forEach(function(token) {
-                stemmedTokens.push(stemmer.stem(token));
-            });
+            for (const token of tokens) {
+                stemmedTokens.push(this.stem(token));
+            }
         }
 
         else {
-            tokens.forEach(function(token) {
+            for (const token of tokens) {
                 if (stopwords.words.indexOf(token) == -1)
-                    stemmedTokens.push(stemmer.stem(token));
-            });
+                    stemmedTokens.push(this.stem(token));
+            }
         }
 
         return stemmedTokens;
     };
 
-    stemmer.attach = function() {
-        (String.prototype as any).stem = function() {
+    attach() {
+        var stemmer = this;
+        (String.prototype as any).stem = function(this: string) {
             return stemmer.stem(this);
         };
 
-        (String.prototype as any).tokenizeAndStem = function(keepStops) {
+        (String.prototype as any).tokenizeAndStem = function(this: string, keepStops: boolean) {
             return stemmer.tokenizeAndStem(this, keepStops);
         };
     };
 }
+
+export = Stemmer;

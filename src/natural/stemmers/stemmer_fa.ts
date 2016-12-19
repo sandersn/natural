@@ -24,31 +24,32 @@ THE SOFTWARE.
 import stopwords = require('../util/stopwords_fa');
 import Tokenizer = require('../tokenizers/aggressive_tokenizer_fa');
 
-export = function() {
-    var stemmer = this;
-
-    stemmer.stem = function(token) {
+class Stemmer_Fa {
+    stem(token: string) {
         return token;
     };
 
-    stemmer.tokenizeAndStem = function(text, keepStops) {
+    tokenizeAndStem(text: string, keepStops: boolean) {
         var stemmedTokens = [];
 
-        new Tokenizer().tokenize(text).forEach(function(token) {
+        for (const token of new Tokenizer().tokenize(text)) {
             if(keepStops || stopwords.words.indexOf(token) == -1)
-                stemmedTokens.push(stemmer.stem(token));
-        });
+                stemmedTokens.push(this.stem(token));
+        }
 
         return stemmedTokens;
     };
 
-    stemmer.attach = function() {
-        (String.prototype as any).stem = function() {
+    attach() {
+        var stemmer = this;
+        (String.prototype as any).stem = function(this: string) {
             return stemmer.stem(this);
         };
 
-        (String.prototype as any).tokenizeAndStem = function(keepStops) {
+        (String.prototype as any).tokenizeAndStem = function(this: string, keepStops: boolean) {
             return stemmer.tokenizeAndStem(this, keepStops);
         };
     };
 }
+
+export = Stemmer_Fa;

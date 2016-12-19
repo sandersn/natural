@@ -41,7 +41,7 @@ class Stemmer_Pt {
 
         for (const token of new Tokenizer().tokenize(text)) {
             if (keepStops || stopwords.words.indexOf(token.toLowerCase()) === -1) {
-                stemmedTokens.push(Stemmer.stem(token));
+                stemmedTokens.push(this.stem(token));
             }
         }
 

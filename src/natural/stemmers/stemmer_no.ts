@@ -23,39 +23,40 @@ THE SOFTWARE.
 import stopwords = require('../util/stopwords_no');
 import Tokenizer = require('../tokenizers/aggressive_tokenizer_no');
 
-export = function() {
-    var stemmer = this;
-
-    stemmer.stem = function(token) {
+class Stemmer_No {
+    stem(token: string) {
         return token;
     };
 
-    stemmer.addStopWord = function(stopWord) {
+    addStopWord(stopWord: string) {
         stopwords.words.push(stopWord);
     };
 
-    stemmer.addStopWords = function(moreStopWords) {
+    addStopWords(moreStopWords: string[]) {
         stopwords.words = stopwords.words.concat(moreStopWords);
     };
 
-    stemmer.tokenizeAndStem = function(text, keepStops) {
+    tokenizeAndStem(text: string, keepStops: boolean) {
         var stemmedTokens = [];
 
-        new Tokenizer().tokenize(text).forEach(function(token) {
+        for (const token of new Tokenizer().tokenize(text)) {
             if(keepStops || stopwords.words.indexOf(token.toLowerCase()) == -1)
-                stemmedTokens.push(stemmer.stem(token));
-        });
+                stemmedTokens.push(this.stem(token));
+        }
 
         return stemmedTokens;
     };
 
-    stemmer.attach = function() {
-        (String.prototype as any).stem = function() {
+    attach() {
+        var stemmer = this;
+        (String.prototype as any).stem = function(this: string) {
             return stemmer.stem(this);
         };
 
-        (String.prototype as any).tokenizeAndStem = function(keepStops) {
+        (String.prototype as any).tokenizeAndStem = function(this: string, keepStops: boolean) {
             return stemmer.tokenizeAndStem(this, keepStops);
         };
     };
 }
+
+export = Stemmer_No;

@@ -40,36 +40,32 @@ import stopwords = require('../util/stopwords_ja');
  * @constructor
  */
 class StemmerJa {
-
-
     /**
      * Tokenize and stem a text.
      * Stop words are excluded except if the second argument is true.
      *
-     * @param {string} text
-     * @param {boolean} keepStops Whether to keep stop words from the output or not.
-     * @return {Array.<string>}
+     * @param text
+     * @param keepStops Whether to keep stop words from the output or not.
      */
-    tokenizeAndStem(text, keepStops) {
-        var self = this;
+    tokenizeAndStem(text: string, keepStops: boolean): string[] {
         var stemmedTokens = [];
         var tokens = new Tokenizer().tokenize(text);
 
         // This is probably faster than an if at each iteration.
         if (keepStops) {
-            tokens.forEach(function(token) {
+            for (const token of tokens) {
                 var resultToken = token.toLowerCase();
-                resultToken = self.stem(resultToken);
+                resultToken = this.stem(resultToken);
                 stemmedTokens.push(resultToken);
-            });
+            }
         } else {
-            tokens.forEach(function(token) {
+            for (const token of tokens) {
                 if (stopwords.words.indexOf(token) == -1) {
                     var resultToken = token.toLowerCase();
-                    resultToken = self.stem(resultToken);
+                    resultToken = this.stem(resultToken);
                     stemmedTokens.push(resultToken);
                 }
-            });
+            }
         }
 
         return stemmedTokens;
@@ -78,14 +74,9 @@ class StemmerJa {
 
     /**
      * Stem a term.
-     *
-     * @param {string} token
-     * @return {string}
      */
-    stem(token) {
-        token = this.stemKatakana(token);
-
-        return token;
+    stem(token: string) {
+        return this.stemKatakana(token);
     }
 
 
@@ -93,10 +84,10 @@ class StemmerJa {
      * Remove the final prolonged sound mark on katakana if length is superior to
      * a threshold.
      *
-     * @param {string} token A katakana string to stem.
-     * @return {string} A katakana string stemmed.
+     * @param token A katakana string to stem.
+     * @return A katakana string stemmed.
      */
-    stemKatakana(token) {
+    stemKatakana(token: string): string {
         var HIRAGANA_KATAKANA_PROLONGED_SOUND_MARK = 'ー';
         var DEFAULT_MINIMUM_LENGTH = 4;
 
@@ -114,10 +105,10 @@ class StemmerJa {
      * This implementation is the fastest I know:
      * http://jsperf.com/string-contain-katakana-only/2
      *
-     * @param {string} str A string.
-     * @return {boolean} True if the string has katakana only.
+     * @param str A string.
+     * @return True if the string has katakana only.
      */
-    isKatakana(str) {
+    isKatakana(str: string) {
         return !!str.match(/^[゠-ヿ]+$/);
     }
 
@@ -125,11 +116,11 @@ class StemmerJa {
     attach() {
         var self = this;
 
-        (String.prototype as any).stem = function() {
+        (String.prototype as any).stem = function(this: string) {
             return self.stem(this);
         };
 
-        (String.prototype as any).tokenizeAndStem = function(keepStops) {
+        (String.prototype as any).tokenizeAndStem = function(this: string, keepStops: boolean) {
             return self.tokenizeAndStem(this, keepStops);
         };
     }

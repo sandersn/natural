@@ -23,22 +23,22 @@ THE SOFTWARE.
 import Stemmer = require('./stemmer_es');
 
 var PorterStemmer = new Stemmer();
-module.exports = PorterStemmer;
+export = PorterStemmer;
 
 
-function isVowel(letter){
+function isVowel(letter: string){
 	return (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u' || letter == 'á' || letter == 'é' ||
 			letter == 'í' || letter == 'ó' || letter == 'ú');
 };
 
-function getNextVowelPos(token,start){
+function getNextVowelPos(token: string, start: number){
 	length=token.length
 			for (var i = start; i < length; i++)
 				if (isVowel(token[i])) return i;
 			return length;
 };
 
-function getNextConsonantPos(token,start){
+function getNextConsonantPos(token: string, start: number){
 	length=token.length
 			for (var i = start; i < length; i++)
 				if (!isVowel(token[i])) return i;
@@ -46,19 +46,19 @@ function getNextConsonantPos(token,start){
 };
 
 
-function endsin(token, suffix) {
+function endsin(token: string, suffix: string) {
 	if (token.length < suffix.length) return false;
 	return (token.slice(-suffix.length) == suffix);
 };
 
-function endsinArr(token, suffixes) {
+function endsinArr(token: string, suffixes: string[]) {
 	for(var i=0;i<suffixes.length;i++){
 		if (endsin(token, suffixes[i])) return suffixes[i];
 	}
 	return '';
 };
 
-function removeAccent(token) {
+function removeAccent(token: string) {
 	var str=token.replace(/á/gi,'a');
 	str=str.replace(/é/gi,'e');
 	str=str.replace(/í/gi,'i');
@@ -68,7 +68,7 @@ function removeAccent(token) {
 };
 
 // perform full stemming algorithm on a single word
-PorterStemmer.stem = function(token) {
+PorterStemmer.stem = function(token: string) {
 	token = token.toLowerCase();
 
 	if (token.length<3){

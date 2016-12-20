@@ -26,12 +26,12 @@ var PorterStemmer = new Stemmer();
 export = PorterStemmer;
 
 
-function isVowel(letter){
+function isVowel(letter: string){
 	return (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u' || letter == 'à' ||
 			letter == 'è' || letter == 'ì' || letter == 'ò' || letter == 'ù');
 };
 
-function getNextVowelPos(token,start){
+function getNextVowelPos(token: string, start: number) {
 	start = start + 1;
 	var length = token.length;
 	for (var i = start; i < length; i++) {
@@ -42,7 +42,7 @@ function getNextVowelPos(token,start){
 	return length;
 };
 
-function getNextConsonantPos(token,start){
+function getNextConsonantPos(token: string,start: number) {
     var length=token.length
     for (var i = start; i < length; i++)
         if (!isVowel(token[i])) return i;
@@ -50,19 +50,19 @@ function getNextConsonantPos(token,start){
 };
 
 
-function endsin(token, suffix) {
+function endsin(token: string, suffix: string) {
 	if (token.length < suffix.length) return false;
 	return (token.slice(-suffix.length) == suffix);
 };
 
-function endsinArr(token, suffixes) {
+function endsinArr(token: string, suffixes: string[]) {
 	for(var i=0;i<suffixes.length;i++){
 		if (endsin(token, suffixes[i])) return suffixes[i];
 	}
 	return '';
 };
 
-function replaceAcute(token) {
+function replaceAcute(token: string) {
 	var str=token.replace(/á/gi,'à');
 	str=str.replace(/é/gi,'è');
 	str=str.replace(/í/gi,'ì');
@@ -71,23 +71,22 @@ function replaceAcute(token) {
 	return str;
 };
 
-function vowelMarking(token) {
-	function replacer(match, p1, p2, p3){
-  		return p1+p2.toUpperCase()+p3;
-	};
-	var str=token.replace(/([aeiou])(i|u)([aeiou])/g, replacer);
-	return str;
+function vowelMarking(token: string) {
+    function replacer(match: string, p1: string, p2: string, p3: string){
+        return p1+p2.toUpperCase()+p3;
+    };
+    return token.replace(/([aeiou])(i|u)([aeiou])/g, replacer);
 }
 
 
 // perform full stemming algorithm on a single word
 PorterStemmer.stem = function(token: string) {
-	
+
 	token = token.toLowerCase();
 	token = replaceAcute(token);
-	token = token.replace(/qu/g,'qU');	
+	token = token.replace(/qu/g,'qU');
 	token = vowelMarking(token);
-	
+
 	if (token.length<3){
 		return token;
 	}
@@ -96,13 +95,13 @@ PorterStemmer.stem = function(token: string) {
     var rv: number;
     var len: number;
 	var r1 = r2 = rv = len = token.length;
-	// R1 is the region after the first non-vowel following a vowel, 
+	// R1 is the region after the first non-vowel following a vowel,
 	for(var i=0; i < token.length-1 && r1==len;i++){
  		if(isVowel(token[i]) && !isVowel(token[i+1]) ){
  			r1=i+2;
  		}
 	}
-	// Or is the null region at the end of the word if there is no such non-vowel.  
+	// Or is the null region at the end of the word if there is no such non-vowel.
 
 	// R2 is the region after the first non-vowel following a vowel in R1
 	for(var i=r1; i< token.length-1 && r2==len;i++){
@@ -111,17 +110,17 @@ PorterStemmer.stem = function(token: string) {
 		}
 	}
 
-	// Or is the null region at the end of the word if there is no such non-vowel. 
+	// Or is the null region at the end of the word if there is no such non-vowel.
 
-	// If the second letter is a consonant, RV is the region after the next following vowel, 
-	
+	// If the second letter is a consonant, RV is the region after the next following vowel,
+
 	// RV as follow
 
 	if (len > 3) {
 		if(!isVowel(token[1])) {
 			// If the second letter is a consonant, RV is the region after the next following vowel
 			rv = getNextVowelPos(token, 1) +1;
-		} else if (isVowel(token[0]) && isVowel(token[1])) { 
+		} else if (isVowel(token[0]) && isVowel(token[1])) {
 			// or if the first two letters are vowels, RV is the region after the next consonant
 			rv = getNextConsonantPos(token, 2) + 1;
 		} else {
@@ -138,15 +137,15 @@ PorterStemmer.stem = function(token: string) {
 
 	// Step 0: Attached pronoun
 
-	var pronoun_suf = new Array('glieli','glielo','gliene','gliela','gliele','sene','tene','cela','cele','celi','celo','cene','vela','vele','veli','velo','vene','mela','mele','meli','melo','mene','tela','tele','teli','telo','gli','ci', 'la','le','li','lo','mi','ne','si','ti','vi');	
-	var pronoun_suf_pre1 = new Array('ando','endo');	
+	var pronoun_suf = new Array('glieli','glielo','gliene','gliela','gliele','sene','tene','cela','cele','celi','celo','cene','vela','vele','veli','velo','vene','mela','mele','meli','melo','mene','tela','tele','teli','telo','gli','ci', 'la','le','li','lo','mi','ne','si','ti','vi');
+	var pronoun_suf_pre1 = new Array('ando','endo');
 	var pronoun_suf_pre2 = new Array('ar', 'er', 'ir');
 	var suf = endsinArr(token, pronoun_suf);
 
 	if (suf!='') {
 		var pre_suff1 = endsinArr(rv_txt.slice(0,-suf.length),pronoun_suf_pre1);
-		var pre_suff2 = endsinArr(rv_txt.slice(0,-suf.length),pronoun_suf_pre2);	
-		
+		var pre_suff2 = endsinArr(rv_txt.slice(0,-suf.length),pronoun_suf_pre2);
+
 		if (pre_suff1 != '') {
 			token = token.slice(0,-suf.length);
 		}
@@ -164,7 +163,7 @@ PorterStemmer.stem = function(token: string) {
 	var token_after0 = token;
 
 	// Step 1:  Standard suffix removal
-	
+
 	if ((suf = endsinArr(r2_txt, new  Array('ativamente','abilamente','ivamente','osamente','icamente'))) != '') {
 		token = token.slice(0, -suf.length);	// delete
 	} else if ((suf = endsinArr(r2_txt, new  Array('icazione','icazioni','icatore','icatori','azione','azioni','atore','atori'))) != '') {
@@ -186,17 +185,17 @@ PorterStemmer.stem = function(token: string) {
 	} else if ((suf = endsinArr(r2_txt, new  Array('icativa','icativo','icativi','icative','ativa','ativo','ativi','ative','iva','ivo','ivi','ive'))) != '') {
 		token = token.slice(0,  -suf.length);
 	}
-	
-	
+
+
 	if (token != token_after0) {
 		r1_txt = token.substring(r1);
 		r2_txt = token.substring(r2);
 		rv_txt = token.substring(rv);
 	}
-	
+
 
 	var token_after1 = token;
-	
+
 	// Step 2:  Verb suffixes
 
 	if (token_after0 == token_after1) {
@@ -205,32 +204,31 @@ PorterStemmer.stem = function(token: string) {
 		}
 	}
 
-	
+
 	r1_txt = token.substring(r1);
 	r2_txt = token.substring(r2);
 	rv_txt = token.substring(rv);
 
-	// Always do step 3. 
+	// Always do step 3.
 
 	if ((suf = endsinArr(rv_txt, new Array('ia', 'ie', 'ii', 'io', 'ià', 'iè','iì', 'iò','a','e','i','o','à','è','ì','ò'))) != '') {
 		token = token.slice(0, -suf.length);
-	} 
+	}
 
 	r1_txt = token.substring(r1);
 	r2_txt = token.substring(r2);
 	rv_txt = token.substring(rv);
-	
+
 	if ((suf =endsinArr(rv_txt, new  Array('ch'))) != '') {
 		token = token.slice(0,  -suf.length) + 'c'; // replace with c
 	} else if ((suf =endsinArr(rv_txt, new  Array('gh'))) != '') {
 		token = token.slice(0,  -suf.length) + 'g'; // replace with g
 	}
 
-	
+
 	r1_txt = token.substring(r1);
 	r2_txt = token.substring(r2);
 	rv_txt = token.substring(rv);
 
 	return token.toLowerCase();
-
-};
+}

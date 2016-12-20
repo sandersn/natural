@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Stemmer = require('./stemmer_no');
+import Stemmer = require('./stemmer_no');
 
 // Get the part of the token after the first non-vowel following a vowel
-function getR1(token) {
+function getR1(token: string) {
     var match = token.match(/[aeiouyæåø]{1}[^aeiouyæåø]([A-Za-z0-9_æøåÆØÅäÄöÖüÜ]+)/);
 
     if (match) {
@@ -41,7 +41,7 @@ function getR1(token) {
     return null;
 }
 
-function step1(token) {
+function step1(token: string) {
     // Perform step 1a-c
     var step1aResult = step1a(token),
         step1bResult = step1b(token),
@@ -56,7 +56,7 @@ function step1(token) {
 }
 
 // step 1a as defined for the porter stemmer algorithm.
-function step1a(token) {
+function step1a(token: string) {
     var r1 = getR1(token);
 
     if (!r1) {
@@ -73,7 +73,7 @@ function step1a(token) {
 }
 
 // step 1b as defined for the porter stemmer algorithm.
-function step1b(token) {
+function step1b(token: string) {
     var r1 = getR1(token);
 
     if (!r1) {
@@ -92,7 +92,7 @@ function step1b(token) {
 }
 
 // step 1c as defined for the porter stemmer algorithm.
-function step1c(token) {
+function step1c(token: string) {
     var r1 = getR1(token);
 
     if (!r1) {
@@ -107,7 +107,7 @@ function step1c(token) {
 }
 
 // step 2 as defined for the porter stemmer algorithm.
-function step2(token) {
+function step2(token: string) {
     var r1 = getR1(token);
 
     if (!r1) {
@@ -122,7 +122,7 @@ function step2(token) {
 }
 
 // step 3 as defined for the porter stemmer algorithm.
-function step3(token) {
+function step3(token: string) {
     var r1 = getR1(token);
 
     if (!r1)
@@ -137,14 +137,24 @@ function step3(token) {
     return token;
 }
 
-var PorterStemmer = new Stemmer();
-module.exports = PorterStemmer;
+interface PorterStemmer extends Stemmer {
+    getR1: (token: string) => string;
+    step1: (token: string) => string;
+    step1a: (token: string) => string;
+    step1b: (token: string) => string;
+    step1c: (token: string) => string;
+    step2: (token: string) => string;
+    step3: (token: string) => string;
+}
+
+
+var PorterStemmer = new Stemmer() as PorterStemmer;
+export = PorterStemmer;
 
 // perform full stemming algorithm on a single word
-PorterStemmer.stem = function(token) {
+PorterStemmer.stem = function(token: string) {
     return step3(step2(step1(token.toLowerCase()))).toString();
 };
-
 //exports for tests
 PorterStemmer.getR1  = getR1;
 PorterStemmer.step1  = step1;

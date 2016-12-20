@@ -29,8 +29,14 @@ THE SOFTWARE.
 
 import Stemmer = require('./stemmer_fr');
 
-var PorterStemmer = new Stemmer();
+var PorterStemmer = new Stemmer() as PorterStemmer;
 export = PorterStemmer;
+
+interface PorterStemmer extends Stemmer {
+    prelude: (token: string) => string;
+    regions: (token: string) => { r1: number, r2: number, rv: number };
+    endsinArr: (token: string, suffixes: string[]) => string;
+}
 
 // Export
 PorterStemmer.stem = stem;
@@ -45,7 +51,7 @@ PorterStemmer.endsinArr = endsinArr;
  * @param  {String} token Word to be stemmed
  * @return {String}       Stemmed word
  */
-function stem(token) {
+function stem(token: string) {
   token = prelude(token.toLowerCase());
 
   if (token.length == 1)
@@ -271,7 +277,7 @@ function stem(token) {
  * @param  {String} token Word to compute regions on
  * @return {Object}       Regions r1, r2, rv as offsets from the begining of the word
  */
-function regions(token) {
+function regions(token: string) {
     var r1, r2, rv, len;
     var i: number;
 
@@ -321,7 +327,7 @@ function regions(token) {
  * @param  {String} token Word to be prepared
  * @return {String}       Prepared word
  */
-function prelude(token) {
+function prelude(token: string) {
   token = token.toLowerCase();
 
   var result = '';
@@ -347,7 +353,7 @@ function prelude(token) {
   }
 
   return result;
-};
+}
 
 /**
  * Return longest matching suffixes for a token or '' if no suffix match
@@ -355,7 +361,7 @@ function prelude(token) {
  * @param  {Array} suffixes  Array of suffixes to test matching
  * @return {String}          Longest found matching suffix or ''
  */
-function endsinArr(token, suffixes) {
+function endsinArr(token: string, suffixes: string | string[]) {
   var i, longest = '';
   for (i = 0; i < suffixes.length; i++) {
     if (endsin(token, suffixes[i]) && suffixes[i].length > longest.length)
@@ -366,12 +372,12 @@ function endsinArr(token, suffixes) {
 };
 
 
-function isVowel(letter) {
+function isVowel(letter: string) {
   return (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u' || letter == 'y' || letter == 'â' || letter == 'à' || letter == 'ë' ||
     letter == 'é' || letter == 'ê' || letter == 'è' || letter == 'ï' || letter == 'î' || letter == 'ô' || letter == 'û' || letter == 'ù');
 };
 
-function endsin(token, suffix) {
+function endsin(token: string, suffix: string) {
   if (token.length < suffix.length) return false;
   return (token.slice(-suffix.length) == suffix);
 };

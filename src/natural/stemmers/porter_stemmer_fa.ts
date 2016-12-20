@@ -21,13 +21,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Stemmer = require('./stemmer_fa');
+import Stemmer = require('./stemmer_fa');
 
 var PorterStemmer = new Stemmer();
-module.exports = PorterStemmer;
+export = PorterStemmer;
 
 // disabled stemming for Farsi
 // Farsi stemming will be supported soon
-PorterStemmer.stem = function(token) {
+PorterStemmer.stem = function(token: string) {
     return token;
 };

@@ -24,18 +24,18 @@ import Stemmer = require('./stemmer');
 
 // denote groups of consecutive consonants with a C and consecutive vowels
 // with a V.
-function categorizeGroups(token) {
+function categorizeGroups(token: string) {
     return token.replace(/[^aeiouy]+y/g, 'CV').replace(/[aeiou]+/g, 'V').replace(/[^V]+/g, 'C');
 }
 
 // denote single consonants with a C and single vowels with a V
-function categorizeChars(token) {
+function categorizeChars(token: string) {
     return token.replace(/[^aeiouy]y/g, 'CV').replace(/[aeiou]/g, 'V').replace(/[^V]/g, 'C');
 }
 
 // calculate the "measure" M of a word. M is the count of VC sequences dropping
 // an initial C if it exists and a trailing V if it exists.
-function measure(token) {
+function measure(token: string) {
     if(!token)
     	return -1;
 
@@ -43,14 +43,14 @@ function measure(token) {
 }
 
 // determine if a token end with a double consonant i.e. happ
-function endsWithDoublCons(token) {
+function endsWithDoublCons(token: string) {
     return token.match(/([^aeiou])\1$/);
 }
 
 // replace a pattern in a word. if a replacement occurs an optional callback
 // can be called to post-process the result. if no match is made NULL is
 // returned.
-function attemptReplace(token, pattern, replacement, callback?) {
+function attemptReplace(token: string, pattern: string | RegExp, replacement: string, callback?: (result: string) => string) {
     var result = null;
 
     if((typeof pattern == 'string') && token.substr(0 - pattern.length) == pattern)
@@ -66,7 +66,7 @@ function attemptReplace(token, pattern, replacement, callback?) {
 
 // attempt to replace a list of patterns/replacements on a token for a minimum
 // measure M.
-function attemptReplacePatterns(token, replacements, measureThreshold = null) {
+function attemptReplacePatterns(token: string, replacements: [string | RegExp, string, string][], measureThreshold: number = null) {
     var replacement = token;
 
     for(var i = 0; i < replacements.length; i++) {   
@@ -80,21 +80,21 @@ function attemptReplacePatterns(token, replacements, measureThreshold = null) {
 
 // replace a list of patterns/replacements on a word. if no match is made return
 // the original token.
-function replacePatterns(token, replacements, measureThreshold) {
+function replacePatterns(token: string, replacements: [string | RegExp, string, string][], measureThreshold: number) {
     return attemptReplacePatterns(token, replacements, measureThreshold) || token;
 }
 
 // TODO: this should replace all of the messy replacement stuff above
-function replaceRegex(token, regex, includeParts, minimumMeasure) {
+function replaceRegex(token: string, regex: RegExp, includeParts: number[], minimumMeasure: number) {
     var parts;
     var result = '';
 
     if(regex.test(token)) {
         parts = regex.exec(token);
 
-        includeParts.forEach(function(i) {
+        for (const i of includeParts) {
             result += parts[i];
-        });
+        }
     }
 
     if(measure(result) > minimumMeasure) {
@@ -104,8 +104,8 @@ function replaceRegex(token, regex, includeParts, minimumMeasure) {
     return null;
 }
 
-// step 1a as defined for the porter stemmer algorithm. 
-function step1a(token) {    
+// step 1a as defined for the porter stemmer algorithm.
+function step1a(token: string) {
     if(token.match(/(ss|i)es$/)) {
         return token.replace(/(ss|i)es$/, '$1');
     }
@@ -117,36 +117,36 @@ function step1a(token) {
     return token;
 }
 
-// step 1b as defined for the porter stemmer algorithm. 
-function step1b(token) {   
+// step 1b as defined for the porter stemmer algorithm.
+function step1b(token: string) {
     if(token.substr(-3) == 'eed') {
         if(measure(token.substr(0, token.length - 3)) > 0)
             return token.replace(/eed$/, 'ee');
     } else {
-        var result = attemptReplace(token, /(ed|ing)$/, '', function(token) {
+        var result: string = attemptReplace(token, /(ed|ing)$/, '', function(token) {
             if(categorizeGroups(token).indexOf('V') >= 0) {
-                result = attemptReplacePatterns(token, [['at', '', 'ate'],  ['bl', '', 'ble'], ['iz', '', 'ize']]);
+                var whatever = attemptReplacePatterns(token, [['at', '', 'ate'],  ['bl', '', 'ble'], ['iz', '', 'ize']]);
 
-                if(result != token) {
-        		    return result;
-        		} else {
-        		  if(endsWithDoublCons(token) && token.match(/[^lsz]$/)) {
-        			 return token.replace(/([^aeiou])\1$/, '$1');
+                if(whatever != token) {
+                    return whatever;
+                } else {
+                    if(endsWithDoublCons(token) && token.match(/[^lsz]$/)) {
+                        return token.replace(/([^aeiou])\1$/, '$1');
                     }
 
-        		  if(measure(token) == 1 && categorizeChars(token).substr(-3) == 'CVC' && token.match(/[^wxy]$/)) {
-        			 return token + 'e';
+                    if(measure(token) == 1 && categorizeChars(token).substr(-3) == 'CVC' && token.match(/[^wxy]$/)) {
+                        return token + 'e';
                     }
-        		}                
+                }
 
-        		return token;
-    	    }
-    	    
-    	    return null;
-    	});
-    	
-    	if(result) {
-    	    return result;
+                return token;
+            }
+
+            return null;
+        });
+
+        if(result) {
+            return result;
         }
     }
 
@@ -154,7 +154,7 @@ function step1b(token) {
 }
 
 // step 1c as defined for the porter stemmer algorithm. 
-function step1c(token) {
+function step1c(token: string) {
     var categorizedGroups = categorizeGroups(token);
 
     if(token.substr(-1) == 'y' && categorizedGroups.substr(0, categorizedGroups.length - 1).indexOf('V') > -1) {
@@ -165,7 +165,7 @@ function step1c(token) {
 }
 
 // step 2 as defined for the porter stemmer algorithm. 
-function step2(token) {
+function step2(token: string) {
     token = replacePatterns(token, [['ational', '', 'ate'], ['tional', '', 'tion'], ['enci', '', 'ence'], ['anci', '', 'ance'],
         ['izer', '', 'ize'], ['abli', '', 'able'], ['bli', '', 'ble'], ['alli', '', 'al'], ['entli', '', 'ent'], ['eli', '', 'e'],
         ['ousli', '', 'ous'], ['ization', '', 'ize'], ['ation', '', 'ate'], ['ator', '', 'ate'],['alism', '', 'al'],
@@ -176,20 +176,20 @@ function step2(token) {
 }
 
 // step 3 as defined for the porter stemmer algorithm. 
-function step3(token) {
+function step3(token: string) {
     return replacePatterns(token, [['icate', '', 'ic'], ['ative', '', ''], ['alize', '', 'al'],
 				   ['iciti', '', 'ic'], ['ical', '', 'ic'], ['ful', '', ''], ['ness', '', '']], 0);
 }
 
 // step 4 as defined for the porter stemmer algorithm. 
-function step4(token) {
+function step4(token: string) {
     return replaceRegex(token, /^(.+?)(al|ance|ence|er|ic|able|ible|ant|ement|ment|ent|ou|ism|ate|iti|ous|ive|ize)$/, [1], 1) || 
         replaceRegex(token, /^(.+?)(s|t)(ion)$/, [1, 2], 1) ||
         token; 
 }
 
 // step 5a as defined for the porter stemmer algorithm. 
-function step5a(token) {
+function step5a(token: string) {
     var m = measure(token.replace(/e$/, ''));
 
 
@@ -202,7 +202,7 @@ function step5a(token) {
 }
 
 // step 5b as defined for the porter stemmer algorithm. 
-function step5b(token) {
+function step5b(token: string) {
     if(measure(token) > 1) {
        return token.replace(/ll$/, 'l'); 
     }
@@ -210,8 +210,21 @@ function step5b(token) {
     return token;
 }
 
-var PorterStemmer = new Stemmer();
-module.exports = PorterStemmer;
+var PorterStemmer = new Stemmer() as PorterStemmer;
+export = PorterStemmer;
+
+interface PorterStemmer extends Stemmer {
+    categorizeGroups: (token: string) => string;
+    measure: (token: string) => number;
+    step1a: (token: string) => string;
+    step1b: (token: string) => string;
+    step1c: (token: string) => string;
+    step2: (token: string) => string;
+    step3: (token: string) => string;
+    step4: (token: string) => string;
+    step5a: (token: string) => string;
+    step5b: (token: string) => string;
+}
 
 
 // perform full stemming algorithm on a single word

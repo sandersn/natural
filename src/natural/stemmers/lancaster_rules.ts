@@ -20,7 +20,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-exports.rules = {
+type LancasterRule = {
+    appendage?: string;
+    continuation: boolean;
+    intact: boolean;
+    pattern: string;
+    size: string;
+}
+export var rules: { [s: string]: LancasterRule[] } = {
     "a": [
         {
             "continuation": false, 

@@ -21,9 +21,9 @@ THE SOFTWARE.
 */
 
 var Stemmer = require('./stemmer');
-var ruleTable = require('./lancaster_rules').rules;
+import { rules as ruleTable } from './lancaster_rules';
 
-function acceptable(candidate) {
+function acceptable(candidate: string) {
     if (candidate.match(/^[aeiou]/))
         return (candidate.length > 1);
     else
@@ -31,7 +31,7 @@ function acceptable(candidate) {
 }
 
 // take a token, look up the applicatble rule section and attempt some stemming!
-function applyRuleSection(token, intact) {
+function applyRuleSection(token: string, intact: boolean): string {
     var section = token.substr( - 1);
     var rules = ruleTable[section];
 
@@ -41,7 +41,7 @@ function applyRuleSection(token, intact) {
             // only apply intact rules to intact tokens
             && token.substr(0 - rules[i].pattern.length) == rules[i].pattern) {
                 // hack off only as much as the rule indicates
-                var result = token.substr(0, token.length - rules[i].size);
+                var result = token.substr(0, token.length - (rules[i].size as any));
 
                 // if the rules wants us to apply an appendage do so
                 if (rules[i].appendage)
@@ -68,8 +68,8 @@ function applyRuleSection(token, intact) {
 }
 
 var LancasterStemmer = new Stemmer();
-module.exports = LancasterStemmer;
+export = LancasterStemmer;
 
-LancasterStemmer.stem = function(token) {
+LancasterStemmer.stem = function(token: string) {
     return applyRuleSection(token.toLowerCase(), true);
 }

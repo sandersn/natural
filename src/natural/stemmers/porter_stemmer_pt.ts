@@ -20,11 +20,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import Token = require('./token');
 module.exports = (function () {
   'use strict';
 
   var Stemmer     = require('./stemmer_pt'),
-    Token         = require('./token'),
     PorterStemmer = new Stemmer();
 
   /**
@@ -35,7 +35,7 @@ module.exports = (function () {
    * @param {Number} start Start index (defaults to 0).
    * @param {Number}       Region start index.
    */
-   var markRegionN = function (start) {
+    var markRegionN = function (start: number) {
     var index = start || 0,
       length = this.string.length,
       region = length;
@@ -78,11 +78,8 @@ module.exports = (function () {
    * Prelude.
    *
    * Nasalised vowel forms should be treated as a vowel followed by a consonant.
-   *
-   * @param  {String} token Word to stem.
-   * @return {String}       Stemmed token.
    */
-  function prelude (token) {
+    function prelude (token: Token) {
     return token
     .replaceAll('ã', 'a~')
     .replaceAll('õ', 'o~');
@@ -93,10 +90,10 @@ module.exports = (function () {
    *
    * This step should always be performed.
    *
-   * @param  {Token} token Word to stem.
-   * @return {Token}       Stemmed token.
+   * @param  token Word to stem.
+   * @return       Stemmed token.
    */
-  function standardSuffix (token) {
+    function standardSuffix (token: Token) {
 
     token.replaceSuffixInRegion([
       'amentos', 'imentos', 'aço~es', 'adoras', 'adores', 'amento', 'imento',
@@ -150,10 +147,10 @@ module.exports = (function () {
    *
    * Perform this step if no ending was removed in step 1.
    *
-   * @param  {Token} token   Token to stem.
-   * @return {Token}         Stemmed token.
+   * @param  token   Token to stem.
+   * @return         Stemmed token.
    */
-  function verbSuffix (token) {
+    function verbSuffix (token: Token) {
 
     token.replaceSuffixInRegion([
       'aríamos', 'ássemos', 'eríamos', 'êssemos', 'iríamos', 'íssemos',
@@ -187,10 +184,10 @@ module.exports = (function () {
    *
    * Perform this step if the word was changed, in RV and preceded by c.
    *
-   * @param  {Token} token   Token to stem.
-   * @return {Token}         Stemmed token.
+   * @param  token   Token to stem.
+   * @return         Stemmed token.
    */
-  function iPrecededByCSuffix (token) {
+    function iPrecededByCSuffix (token: Token) {
 
     if (token.hasSuffix('ci')) {
       token.replaceSuffixInRegion('i', '', 'rv');
@@ -204,10 +201,10 @@ module.exports = (function () {
    *
    * Perform this step if steps 1 and 2 did not alter the word.
    *
-   * @param  {Token} token Token to stem.
-   * @return {Token}       Stemmed token.
+   * @param  token Token to stem.
+   * @return       Stemmed token.
    */
-  function residualSuffix (token) {
+    function residualSuffix(token: Token) {
 
     token.replaceSuffixInRegion(['os', 'a', 'i', 'o', 'á', 'í', 'ó'], '', 'rv');
 
@@ -219,10 +216,10 @@ module.exports = (function () {
    *
    * This step should always be performed.
    *
-   * @param  {Token} token Token to stem.
-   * @return {Token}       Stemmed token.
+   * @param  token Token to stem.
+   * @return       Stemmed token.
    */
-  function residualForm (token) {
+    function residualForm(token: Token) {
 
     var tokenString = token.string;
 
@@ -248,10 +245,10 @@ module.exports = (function () {
    *
    * Turns a~, o~ back into ã, õ.
    *
-   * @param  {String} token Word to stem.
-   * @return {String}       Stemmed token.
+   * @param  token Word to stem.
+   * @return       Stemmed token.
    */
-  function postlude (token) {
+    function postlude (token: Token) {
     return token
       .replaceAll('a~', 'ã')
       .replaceAll('o~', 'õ');
@@ -260,10 +257,10 @@ module.exports = (function () {
   /**
    * Stems a word using a Porter stemmer algorithm.
    *
-   * @param  {String} word Word to stem.
-   * @return {String}      Stemmed token.
+   * @param  word Word to stem.
+   * @return      Stemmed token.
    */
-  PorterStemmer.stem = function (word) {
+    PorterStemmer.stem = function (word: string) {
     var token = new Token(word.toLowerCase()),
       original;
 
@@ -272,7 +269,7 @@ module.exports = (function () {
     token.usingVowels('aeiouáéíóúâêôàãõ')
       .markRegion('all', 0)
       .markRegion('r1', null, markRegionN)
-      .markRegion('r2', token.regions.r1, markRegionN)
+      .markRegion('r2', token.regions['r1'], markRegionN)
       .markRegion('rv', null, markRegionV);
 
     original = token.string;
@@ -296,7 +293,7 @@ module.exports = (function () {
     token = postlude(token);
 
     return token.string;
-  };
+  }
 
   return PorterStemmer;
 })();

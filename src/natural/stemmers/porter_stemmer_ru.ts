@@ -25,7 +25,7 @@ import Stemmer = require('./stemmer_ru');
 var PorterStemmer = new Stemmer();
 module.exports = PorterStemmer;
 
-function attemptReplacePatterns(token, patterns) {
+function attemptReplacePatterns(token: string, patterns: [RegExp, string][]) {
 	var replacement = null;
 	var i = 0, isReplaced = false;
 	while ((i < patterns.length) && !isReplaced) {
@@ -38,7 +38,7 @@ function attemptReplacePatterns(token, patterns) {
 	return replacement;
 };
 
-function perfectiveGerund(token) {
+function perfectiveGerund(token: string) {
 	var result = attemptReplacePatterns(token, [
 			[/[ая]в(ши|шись)$/g, ''],
 			[/(ив|ивши|ившись|ывши|ывшись|ыв)$/g, '']
@@ -46,7 +46,7 @@ function perfectiveGerund(token) {
 	return result;
 };
 
-function adjectival(token) {
+function adjectival(token: string) {
 	var result = adjective(token);
 	if (result != null) {
 		var pariticipleResult = participle(result);
@@ -55,14 +55,14 @@ function adjectival(token) {
 	return result;
 };
 
-function adjective(token) {
+function adjective(token: string) {
 	var result = attemptReplacePatterns(token, [
 			[/(ее|ие|ые|ое|ими|ыми|ей|ий|ый|ой|ем|им|ым|ом|его|ого|ему|ому|их|ых|ую|юю|ая|яя|ою|ею)$/g, '']
 		]);
 	return result;
 };
 
-function participle(token) {
+function participle(token: string) {
 	var result = attemptReplacePatterns(token, [
 		[/([ая])(ем|нн|вш|ющ|щ)$/g, '$1'],
 		[/(ивш|ывш|ующ)$/g, '']
@@ -70,14 +70,14 @@ function participle(token) {
 	return result;
 };
 
-function reflexive(token) {
+function reflexive(token: string) {
 	var result = attemptReplacePatterns(token, [
 		[/(ся|сь)$/g, '']
 	]);
 	return result;
 };
 
-function verb(token) {
+function verb(token: string) {
 	var result = attemptReplacePatterns(token, [
 		[/([ая])(ла|на|ете|йте|ли|й|л|ем|н|ло|но|ет|ют|ны|ть|ешь|нно)$/g, '$1'],
 		[/(ила|ыла|ена|ейте|уйте|ите|или|ыли|ей|уй|ил|ыл|им|ым|ен|ило|ыло|ено|ят|ует|ит|ыт|ены|ить|ыть|ишь|ую|ю)$/g, '']
@@ -85,21 +85,21 @@ function verb(token) {
 	return result;
 };
 
-function noun(token) {
+function noun(token: string) {
 	var result = attemptReplacePatterns(token, [
 		[/(а|ев|ов|ие|ье|е|иями|ями|ами|еи|ии|и|ией|ей|ой|ий|й|иям|ям|ием|ем|ам|ом|о|у|ах|иях|ях|ы|ь|ию|ью|ю|ия|ья|я)$/g, '']
 	]);
 	return result;
 };
 
-function superlative (token) {
+function superlative (token: string) {
 	var result = attemptReplacePatterns(token, [
 		[/(ейш|ейше)$/g, '']
 	]);
 	return result;
 };
 
-function derivational (token) {
+function derivational (token: string) {
 	var result = attemptReplacePatterns(token, [
 		[/(ост|ость)$/g, '']
 	]);

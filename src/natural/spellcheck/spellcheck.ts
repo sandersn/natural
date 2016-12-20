@@ -1,4 +1,3 @@
-
 import Trie = require('../trie/trie');
 
 // Probabilistic spellchecker based on http://norvig.com/spell-correct.html
@@ -9,7 +8,7 @@ import Trie = require('../trie/trie');
 class Spellcheck {
     trie: Trie;
     word2frequency: { [s: string]: number };
-    constructor(wordlist) {
+    constructor(wordlist: string[]) {
         this.trie = new Trie();
         this.trie.addStrings(wordlist);
         this.word2frequency = {};
@@ -21,25 +20,24 @@ class Spellcheck {
         }
     }
 
-    isCorrect(word) {
+    isCorrect(word: string) {
         return this.trie.contains(word);
     }
 
     // Returns a list of suggested corrections, from highest to lowest probability 
     // maxDistance is the maximum edit distance 
     // According to Norvig, literature suggests that 80% to 95% of spelling errors are an edit distance of 1 away from the correct word. This is good, because there are roughly 54n+25 strings 1 edit distance away from any given string of length n. So after maxDistance = 2, this becomes very slow.
-    getCorrections(word, maxDistance) {
+    getCorrections(word: string, maxDistance: number) {
         var self = this;
         if(!maxDistance) maxDistance = 1;
         var edits = this.editsWithMaxDistance(word, maxDistance);
         edits = edits.slice(1,edits.length);
-        edits = edits.map(function(editList) {
-            return editList.filter(function(word) { return self.isCorrect(word); })
-                .map(function(word) { return [word, self.word2frequency[word]]; })
+        edits = edits.map(editList =>
+            editList.filter(word => this.isCorrect(word))
+                .map(word => [word, this.word2frequency[word]] as [string, number])
                 .sort(function(a,b) { return a[1] > b[1] ? -1 : 1; })
-                .map(function(wordscore) { return wordscore[0]; });
-        });
-        var flattened = [];
+                .map(function(wordscore) { return wordscore[0]; }));
+        var flattened: string[] = [];
         for(var i in edits) {
             if(edits[i].length) flattened = flattened.concat(edits[i]);
         }
@@ -47,7 +45,7 @@ class Spellcheck {
     }
 
     // Returns all edits that are 1 edit-distance away from the input word
-    edits(word) {
+    edits(word: string) {
         var alphabet = 'abcdefghijklmnopqrstuvwxyz';
         var edits = [];
         for(var i=0; i<word.length+1; i++) {
@@ -64,11 +62,11 @@ class Spellcheck {
     }
 
     // Returns all edits that are up to "distance" edit distance away from the input word
-    editsWithMaxDistance(word, distance) { 
+    editsWithMaxDistance(word: string, distance: number) {
         return this.editsWithMaxDistanceHelper(distance, [[word]]);
     }
 
-    editsWithMaxDistanceHelper(distanceCounter, distance2edits) {
+    editsWithMaxDistanceHelper(distanceCounter: number, distance2edits: string[][]): string[][] {
         if(distanceCounter == 0) return distance2edits;
         var currentDepth = distance2edits.length-1;
         var words = distance2edits[currentDepth];

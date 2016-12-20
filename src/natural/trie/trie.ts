@@ -121,7 +121,7 @@ class Trie {
      * A function to search the given string and return true if it lands
      * on on a word. Essentially testing if the word exists in the database.
      **/
-    contains(string: string) {
+    contains(string: string): boolean {
         if(this.cs === false) {
             string = string.toLowerCase();
         }

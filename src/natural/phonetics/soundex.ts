@@ -22,50 +22,50 @@ THE SOFTWARE.
 
 var Phonetic = require('./phonetic');
 
-function transformLipps(token) {
+function transformLipps(token: string) {
     return token.replace(/[bfpv]/g, '1');
 }
 
-function transformThroats(token) {
+function transformThroats(token: string) {
     return token.replace(/[cgjkqsxz]/g, '2');
 }
 
-function transformToungue(token) {
+function transformToungue(token: string) {
     return token.replace(/[dt]/g, '3');
 }
 
-function transformL(token) {
+function transformL(token: string) {
     return token.replace(/l/g, '4');
 }
 
-function transformHum(token) {
+function transformHum(token: string) {
     return token.replace(/[mn]/g, '5');
 }
 
-function transformR(token) {
+function transformR(token: string) {
     return token.replace(/r/g, '6');
 }
 
-function condense(token) {
+function condense(token: string) {
     return token.replace(/(\d)?\1+/g, '$1');
 }
 
-function padRight0(token) {
+function padRight0(token: string) {
     if(token.length < 4)
         return token + Array(4 - token.length).join('0');
     else
         return token;
 }
 
-function transform(token) {
+function transform(token: string) {
     return transformLipps(transformThroats(
         transformToungue(transformL(transformHum(transformR(token))))));
 }
 
 var SoundEx = new Phonetic();
-module.exports = SoundEx;
+export = SoundEx;
 
-SoundEx.process = function(token, maxLength) {
+SoundEx.process = function(token: string, maxLength: number) {
     token = token.toLowerCase();    
     var transformed = condense(transform(token.substr(1, token.length - 1))); // anything that isn't a digit goes
     // deal with duplicate INITIAL consonant SOUNDS

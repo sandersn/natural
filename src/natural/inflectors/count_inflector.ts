@@ -20,28 +20,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-function nthForm(i) {
-    var teenth = (i % 100);
+function nthForm(i: number) {
+    const teenth = (i % 100);
 
-    if(teenth > 10 && teenth < 14)
-        return 'th';
+    if (teenth > 10 && teenth < 14)
+        return "th";
     else {
-        switch(i % 10) {
+        switch (i % 10) {
             case 1:
-                return 'st';
+                return "st";
             case 2:
-                return 'nd';
+                return "nd";
             case 3:
-                return 'rd';
+                return "rd";
             default:
-                return 'th';
+                return "th";
         }
     }
 }
 
 
 class CountInflector {
-    static nth(i) {
+    static nth(i: number) {
         return i.toString() + nthForm(i);
     }
 }

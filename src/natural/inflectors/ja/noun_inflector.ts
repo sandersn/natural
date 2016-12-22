@@ -42,25 +42,7 @@
 import SingularPluralInflector = require('../singular_plural_inflector');
 import FormSet = require('../form_set');
 
-function attach() {
-    var inflector = this;
-
-    (String.prototype as any).singularizeNoun = function() {
-        return inflector.singularize(this);
-    };
-
-    (String.prototype as any).pluralizeNoun = function() {
-        return inflector.pluralize(this);
-    };
-}
-
-
-
-/**
- * @constructor
- */
 class NounInflector extends SingularPluralInflector {
-    attach: () => void;
     constructor() {
         super();
         // Ambiguous a.k.a. invariant.
@@ -73,8 +55,6 @@ class NounInflector extends SingularPluralInflector {
         this.customSingularForms = [];
         this.singularForms = new FormSet();
         this.pluralForms = new FormSet();
-
-        this.attach = attach;
 
         this.addIrregular('神', '神神');
         this.addIrregular('人', '人人');
@@ -100,7 +80,7 @@ class NounInflector extends SingularPluralInflector {
         this.pluralForms.regularForms.push([/^(.+)$/i, '$1たち']);
 
         // Singularize
-        this.singularForms.regularForms.push([/^(.+)たち$/i, function(a, mask) {
+        this.singularForms.regularForms.push([/^(.+)たち$/i, function(sub, mask){
             if (['い', 'おい', 'つい', 'か', 'かおか', 'なりか', 'いで', 'は', 'から',
                  'なり'].indexOf(mask) >= 0)
                 return mask + 'たち';
@@ -123,14 +103,32 @@ class NounInflector extends SingularPluralInflector {
         this.singularForms.regularForms.push([/^(人間|わたくし|私|てまえ|手前|野郎|やろう|勇者|がき|ガキ|餓鬼|あくとう|悪党|猫|家来)(共|ども)$/i, '$1']);
         this.singularForms.regularForms.push([/^(神様|先生|あなた|大名|女中|奥様)(方|がた)$/i, '$1']);
 
-        this.pluralize = function(token) {
-            return this.ize(token, this.pluralForms, this.customPluralForms);
+    };
+
+    pluralize(token: string) {
+        return this.ize(token, this.pluralForms, this.customPluralForms);
+    }
+
+    singularize(token: string) {
+        return this.ize(token, this.singularForms, this.customSingularForms);
+    }
+
+    attach() {
+        var inflector = this;
+
+        (String.prototype as any).singularizeNoun = function(this: string) {
+            return inflector.singularize(this);
         };
 
-        this.singularize = function(token) {
-            return this.ize(token, this.singularForms, this.customSingularForms);
+        (String.prototype as any).pluralizeNoun = function(this: string) {
+            return inflector.pluralize(this);
         };
-    };
+    }
+
+
+
+
+    
 }
 
 export = NounInflector;

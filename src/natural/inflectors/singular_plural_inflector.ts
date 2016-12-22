@@ -20,55 +20,61 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-function uppercaseify(token) {
+function uppercaseify(token: string) {
     return token.toUpperCase();
 }
-function capitalize(token) {
+function capitalize(token: string) {
     return token[0].toUpperCase() + token.slice(1);
 }
-function lowercaseify(token) {
+function lowercaseify(token: string) {
     return token.toLowerCase();
 }
 
+interface Forms {
+    regularForms: [RegExp, string | ((sub: string, ...args: any[]) => string)][];
+    irregularForms: { [s: string]: string };
+}
 
 class TenseInflector {
-    singularForms: any;
-    pluralForms: any;
-    customSingularForms: [any, any][];
-    customPluralForms: [any, any][];
+    singularForms: Forms;
+    pluralForms: Forms;
+    customSingularForms: [RegExp, string][];
+    customPluralForms: [RegExp, string][];
     ambiguous: string[];
 
-    addSingular(pattern, replacement) {
-        this.customSingularForms.push([pattern, replacement]);    
+    addSingular(pattern: RegExp, replacement: string) {
+        this.customSingularForms.push([pattern, replacement]);
     };
 
-    addPlural(pattern, replacement) {
+    addPlural(pattern: RegExp, replacement: string) {
         this.customPluralForms.push([pattern, replacement]);
     };
 
-    ize(token, formSet, customForms) {
-        var restoreCase = this.restoreCase(token);
-        return restoreCase(this.izeRegExps(token, customForms) || this.izeAbiguous(token) ||
-                           this.izeRegulars(token, formSet) || this.izeRegExps(token, formSet.regularForms) ||
+    ize(token: string, formSet: Forms, customForms: [RegExp, string][]) {
+        const restoreCase = this.restoreCase(token);
+        return restoreCase(this.izeRegExps(token, customForms) ||
+                           this.izeAbiguous(token) ||
+                           this.izeRegulars(token, formSet) ||
+                           this.izeRegExps(token, formSet.regularForms) ||
                            token);
     }
 
-    izeAbiguous(token) {
-        if(this.ambiguous.indexOf(token.toLowerCase()) > -1)
+    izeAbiguous(token: string) {
+        if (this.ambiguous.indexOf(token.toLowerCase()) > -1)
             return token.toLowerCase();
 
         return false;
     }
 
-    pluralize(token) {
+    pluralize(token: string) {
         return this.ize(token, this.pluralForms, this.customPluralForms);
     }
 
-    singularize(token) {
+    singularize(token: string) {
         return this.ize(token, this.singularForms, this.customSingularForms);
     }
 
-    restoreCase(token) {
+    restoreCase(token: string) {
         if (token[0] === token[0].toUpperCase()) {
             if (token[1] && token[1] === token[1].toLowerCase()) {
                 return capitalize;
@@ -80,7 +86,7 @@ class TenseInflector {
         }
     }
 
-    izeRegulars(token, formSet) {
+    izeRegulars(token: string, formSet: Forms) {
         token = token.toLowerCase();
         if (formSet.irregularForms.hasOwnProperty(token) && formSet.irregularForms[token])
             return formSet.irregularForms[token];
@@ -88,24 +94,28 @@ class TenseInflector {
         return false;
     }
 
-    addForm(singularTable, pluralTable, singular, plural) {
+    addForm(singularTable: { [s: string]: string }, pluralTable: { [s: string]: string }, singular: string, plural: string) {
         singular = singular.toLowerCase();
         plural = plural.toLowerCase();
         pluralTable[singular] = plural;
         singularTable[plural] = singular;
     };
 
-    addIrregular(singular, plural) {
+    addIrregular(singular: string, plural: string) {
         this.addForm(this.singularForms.irregularForms, this.pluralForms.irregularForms, singular, plural);
     };
 
-    izeRegExps(token, forms) {
-        var i, form;
-        for (i = 0; i < forms.length; i++) {
-            form = forms[i];
-
-            if (token.match(form[0]))
-                return token.replace(form[0], form[1]);
+    izeRegExps(token: string, forms: [RegExp, string | ((sub: string, ...args: any[]) => string)][]) {
+        for (const [pattern, replacement] of forms) {
+            if (token.match(pattern)) {
+                if (typeof replacement === 'string') {
+                    return token.replace(pattern, replacement);
+                }
+                else
+                {
+                    return token.replace(pattern, replacement);
+                }
+            }
         }
 
         return false;

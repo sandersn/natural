@@ -23,20 +23,7 @@ THE SOFTWARE.
 import SingularPluralInflector = require('./singular_plural_inflector');
 import FormSet = require('./form_set');
 
-function attach() {
-    var inflector = this;
-
-    (String.prototype as any).singularizeNoun = function () {
-        return inflector.singularize(this);
-    };
-
-    (String.prototype as any).pluralizeNoun = function() {
-        return inflector.pluralize(this);
-    };
-}
-
 class NounInflector extends SingularPluralInflector {
-    attach: () => void;
     constructor() {
         super();
         this.ambiguous = [
@@ -51,8 +38,6 @@ class NounInflector extends SingularPluralInflector {
         this.customSingularForms = [];    
         this.singularForms = new FormSet();
         this.pluralForms = new FormSet();
-
-        this.attach = attach;
 
         this.addIrregular("child", "children");
         this.addIrregular("man", "men");
@@ -94,13 +79,26 @@ class NounInflector extends SingularPluralInflector {
         this.singularForms.regularForms.push([/men$/i, 'man']);
         this.singularForms.regularForms.push([/ss$/i, 'ss']);
         this.singularForms.regularForms.push([/s$/i, '']);
+    }
         
-        this.pluralize = function (token) {
-            return this.ize(token, this.pluralForms, this.customPluralForms);
+
+    pluralize(token: string) {
+        return this.ize(token, this.pluralForms, this.customPluralForms);
+    };
+    
+    singularize(token: string) {
+        return this.ize(token, this.singularForms, this.customSingularForms);
+    };
+
+    attach() {
+        var inflector = this;
+
+        (String.prototype as any).singularizeNoun = function (this: string) {
+            return inflector.singularize(this);
         };
-        
-        this.singularize = function(token) {
-            return this.ize(token, this.singularForms, this.customSingularForms);
+
+        (String.prototype as any).pluralizeNoun = function(this: string) {
+            return inflector.pluralize(this);
         };
     }
 }

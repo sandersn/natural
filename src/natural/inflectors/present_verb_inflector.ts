@@ -23,27 +23,12 @@ THE SOFTWARE.
 import SingularPluralInflector = require('./singular_plural_inflector');
 import FormSet = require('./form_set');
 
-function attach() {
-    var inflector = this;
-
-    (String.prototype as any).singularizePresentVerb = function() {
-        return inflector.singularize(this);
-    };
-
-    (String.prototype as any).pluralizePresentVerb = function() {
-        return inflector.pluralize(this);
-    };
-}
-
 class VerbInflector extends SingularPluralInflector {
-    attach: () => void;
     constructor() {
         super();
         this.ambiguous = [
             'will'
         ];
-
-        this.attach = attach;
 
         this.customPluralForms = [];
         this.customSingularForms = [];    
@@ -71,6 +56,18 @@ class VerbInflector extends SingularPluralInflector {
         this.pluralForms.regularForms.push([/ies$/i, 'y']);//flies->fly
         this.pluralForms.regularForms.push([/e?s$/i, '']);
     };
+
+    attach() {
+        var inflector = this;
+
+        (String.prototype as any).singularizePresentVerb = function(this: string) {
+            return inflector.singularize(this);
+        };
+
+        (String.prototype as any).pluralizePresentVerb = function(this: string) {
+            return inflector.pluralize(this);
+        };
+    }
 }
 
 export = VerbInflector;

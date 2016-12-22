@@ -29,7 +29,7 @@
  **/
 import { replacer } from '../util/utils';
 
-var conversionTable = {
+var conversionTable: { [abbreviation: string]: string } = {
 	"can't":"can not",
 	"won't":"will not",
 	"couldn't've":"could not have",
@@ -47,11 +47,11 @@ var rules = [
 ];
 
 // Accepts a list of tokens to expand.
-export function normalize_tokens(tokens) {
+export function normalize_tokens(tokens: string | string[]) {
 	if(typeof tokens === "string") {
 		tokens = [tokens];
 	}
-        var results = [];
+        var results: string[] = [];
 	var rule_count = rules.length;
 	var num_tokens = tokens.length;
         var i, token, r, rule;

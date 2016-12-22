@@ -189,7 +189,6 @@ function process(token: string, maxLength = 32) {
 
     return token.toUpperCase();
 }
-var testFunctions = { dedup, dropInitialLetters };
 
 var Metaphone: Metaphone = createPhonetic(process) as Metaphone;
 

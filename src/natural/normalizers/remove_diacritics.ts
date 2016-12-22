@@ -114,10 +114,10 @@ var diacriticsRemovalMap = [
 ];
 
 
-module.exports = function(str) {
+export = function(str: string) {
 	var rules = diacriticsRemovalMap;
 	for (var i = 0; i < rules.length; i++) {
 		str = str.replace(rules[i].letters, rules[i].base);
 	}
 	return str;
-};
+}

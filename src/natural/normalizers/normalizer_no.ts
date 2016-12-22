@@ -24,7 +24,7 @@
  * Remove commonly used diacritic marks from a string as these
  * are not used in a consistent manner. Leave only ä, ö, ü.
  */
-export function remove_diacritics(text) {
+export function remove_diacritics(text: string) {
     text = text.replace('à', 'a');
     text = text.replace('À', 'A');
     text = text.replace('á', 'a');

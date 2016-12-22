@@ -24,15 +24,28 @@ import PorterStemmer = require('../stemmers/porter_stemmer');
 import Stemmer = require('../stemmers/stemmer');
 import util = require('util');
 import events = require('events');
+import fs = require('fs');
+
+interface Doc {
+    text: string[];
+    label: string;
+}
+
+interface OtherClassifier {
+    classify(features: number[]): number[];
+    getClassifications(features: number[]): number[];
+    addExample(features: number[], label: string): void;
+    train(): void;
+}
 
 class Classifier {
-    classifier;
-    docs;
-    features;
-    stemmer: any; // typeof Stemmer;
+    classifier: OtherClassifier;
+    docs: Doc[];
+    features: { [s: string]: number };
+    stemmer: Stemmer;
     lastAdded: number;
     events: events.EventEmitter;
-    constructor(classifier, stemmer) {
+    constructor(classifier: OtherClassifier, stemmer: Stemmer) {
         this.classifier = classifier;
         this.docs = [];
         this.features = {};
@@ -40,7 +53,8 @@ class Classifier {
         this.lastAdded = 0;
         this.events = new events.EventEmitter();
     }
-    addDocument(text, classification) {
+
+    addDocument(text: string | string[], classification: string | undefined) {
         
         // Ignore further processing if classification is undefined 
         if(typeof classification === 'undefined') return;
@@ -69,7 +83,7 @@ class Classifier {
         }
     }
 
-    removeDocument(text, classification) {
+    removeDocument(text: string | string[], classification: string | undefined) {
         var docs = this.docs
         , doc
         , pos;
@@ -96,7 +110,7 @@ class Classifier {
         }
     }
 
-    textToFeatures(observation) {
+    textToFeatures(observation: string | string[]) {
         var features = [];
 
         if(typeof observation === 'string')
@@ -125,22 +139,21 @@ class Classifier {
     }
 
     retrain() {
-        this.classifier = new (this.classifier.constructor)();
+        this.classifier = new (this.classifier.constructor as any)();
         this.lastAdded = 0;
         this.train();
     }
 
-    getClassifications(observation) {
+    getClassifications(observation: string | string[]) {
         return this.classifier.getClassifications(this.textToFeatures(observation));
     }
 
-    classify(observation) {
+    classify(observation: string | string[]) {
         return this.classifier.classify(this.textToFeatures(observation));
     }
 
-    save(filename, callback) {
+    save(filename: string, callback: (err: NodeJS.ErrnoException, classifier: Classifier | null) => void) {
         var data = JSON.stringify(this);
-        var fs = require('fs');
         var classifier = this;
         fs.writeFile(filename, data, 'utf8', function(err) {
             if(callback) {
@@ -149,16 +162,14 @@ class Classifier {
         });
     }
 
-    static restore(classifier, stemmer) {
+    static restore(classifier: Classifier, stemmer: Stemmer) {
         classifier.stemmer = stemmer || PorterStemmer;
         classifier.events = new events.EventEmitter();
         return classifier;
     }
 
-    static load(filename, stemmerOrCallback, optionalCallback?) {
-        const callback = optionalCallback ? optionalCallback : stemmerOrCallback;
-        const fs = require("fs");
-
+    static load(filename: string, stemmerOrCallback: Stemmer | ((err: NodeJS.ErrnoException, classifier: Classifier) => void), optionalCallback?: (err: NodeJS.ErrnoException, classifier: {}) => void) {
+        const callback = optionalCallback ? optionalCallback : stemmerOrCallback as ((err: NodeJS.ErrnoException, classifier: Classifier) => void);
         fs.readFile(filename, "utf8", function(err, data) {
             const classifier = err ? undefined : JSON.parse(data);
             if (callback)

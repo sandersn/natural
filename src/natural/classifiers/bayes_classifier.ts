@@ -21,9 +21,10 @@ THE SOFTWARE.
 */
 
 import Classifier = require('./classifier');
+import Stemmer = require('../stemmers/stemmer');
 import { BayesClassifier as ApparatusBayesClassifier } from  'apparatus';
 class BayesClassifier extends Classifier {
-    constructor(stemmer, smoothing) {
+    constructor(stemmer: Stemmer, smoothing?: number) {
         var abc = new ApparatusBayesClassifier();
         if (smoothing && isFinite(smoothing)) {
             abc = new ApparatusBayesClassifier(smoothing);
@@ -31,15 +32,15 @@ class BayesClassifier extends Classifier {
         super(abc, stemmer);
     }
 
-    static restore(classifier, stemmer) {
+    static restore(classifier: Classifier, stemmer: Stemmer) {
         classifier = Classifier.restore(classifier, stemmer);
-        classifier.__proto__ = BayesClassifier.prototype;
+        (classifier as any).__proto__ = BayesClassifier.prototype;
         classifier.classifier = ApparatusBayesClassifier.restore(classifier.classifier);
 
         return classifier;
     }
 
-    static load(filename, stemmer, callback) {
+    static load(filename: string, stemmer: Stemmer, callback: (err: NodeJS.ErrnoException, classifier?: Classifier) => void) {
         Classifier.load(filename, function(err, classifier) {
             if (err) {
                 callback(err);

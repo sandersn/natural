@@ -51,7 +51,7 @@ class Stemmer {
     };
 
 
-    tokenizeAndStem(text: string, keepStops: boolean) {
+    tokenizeAndStem(text: string, keepStops?: boolean) {
         var stemmedTokens = [];
         var lowercaseText = text.toLowerCase();
         var tokens = new Tokenizer().tokenize(lowercaseText);

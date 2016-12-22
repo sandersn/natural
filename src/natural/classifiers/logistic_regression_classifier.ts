@@ -21,23 +21,24 @@ THE SOFTWARE.
 */
 
 import Classifier = require("./classifier");
+import Stemmer = require('../stemmers/stemmer');
 import { LogisticRegressionClassifier as ApparatusLogisticRegressionClassifier } from "apparatus";
 
 class LogisticRegressionClassifier extends Classifier {
-    constructor(stemmer) {
+    constructor(stemmer: Stemmer) {
         super(new ApparatusLogisticRegressionClassifier(), stemmer);
     }
 
 
-    static restore(classifier, stemmer) {
+    static restore(classifier: Classifier, stemmer: Stemmer) {
         classifier = Classifier.restore(classifier, stemmer);
-        classifier.__proto__ = LogisticRegressionClassifier.prototype;
+        (classifier as any).__proto__ = LogisticRegressionClassifier.prototype;
         classifier.classifier = ApparatusLogisticRegressionClassifier.restore(classifier.classifier);
 
         return classifier;
     }
 
-    static load(filename, stemmer, callback) {
+    static load(filename: string, stemmer: Stemmer, callback: (err: NodeJS.ErrnoException, classifier?: Classifier | null) => void) {
         Classifier.load(filename, function(err, classifier) {
             if (err) {
                 callback(err);

@@ -22,22 +22,22 @@ THE SOFTWARE.
 
 import _ = require("underscore");
 
-export function ngrams(sequence, n, startSymbol, endSymbol) {
+export function ngrams(sequence: string | string[], n: number, startSymbol: string, endSymbol: string) {
     return ngramsWorker(sequence, n, startSymbol, endSymbol);
 }
 
-export function bigrams(sequence, startSymbol, endSymbol) {
+export function bigrams(sequence: string | string[], n: number, startSymbol: string, endSymbol: string) {
     return ngramsWorker(sequence, 2, startSymbol, endSymbol);
 }
 
-export function trigrams(sequence, startSymbol, endSymbol) {
+export function trigrams(sequence: string | string[], n: number, startSymbol: string, endSymbol: string) {
     return ngramsWorker(sequence, 3, startSymbol, endSymbol);
 }
 
-function ngramsWorker(sequence, n, startSymbol, endSymbol) {
+function ngramsWorker(sequence: string | string[], n: number, startSymbol: string, endSymbol: string) {
     let result = [], i: number;
 
-    if (!_(sequence).isArray()) {
+    if (!_.isArray(sequence)) {
         sequence = sequence.split("");
     }
 

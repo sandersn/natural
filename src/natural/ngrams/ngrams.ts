@@ -24,32 +24,32 @@ import _ = require("underscore");
 import { WordTokenizer as Tokenizer } from '../tokenizers/regexp_tokenizer';
 let tokenizer = new Tokenizer();
 
-export function setTokenizer(t) {
-    if(!_.isFunction(t.tokenize))
+export function setTokenizer(t: Tokenizer) {
+    if (!_.isFunction(t.tokenize))
         throw new Error('Expected a valid Tokenizer');
     tokenizer = t;
 }
 
-export function ngrams(sequence, n, startSymbol, endSymbol) {
+export function ngrams(sequence: string | string[], n: number, startSymbol: string, endSymbol: string) {
     return ngramsWorker(sequence, n, startSymbol, endSymbol);
 }
 
-export function bigrams(sequence, startSymbol, endSymbol) {
+export function bigrams(sequence: string | string[], n: number, startSymbol: string, endSymbol: string) {
     return ngramsWorker(sequence, 2, startSymbol, endSymbol);
 }
 
-export function trigrams(sequence, startSymbol, endSymbol) {
+export function trigrams(sequence: string | string[], n: number, startSymbol: string, endSymbol: string) {
     return ngramsWorker(sequence, 3, startSymbol, endSymbol);
 }
 
-export function multrigrams(sequence, n, startSymbol, endSymbol) {
+export function multrigrams(sequence: string | string[], n: number, startSymbol: string, endSymbol: string) {
     return ngramsWorker(sequence, n, startSymbol, endSymbol);
 }
 
-var ngramsWorker = function(sequence, n, startSymbol, endSymbol) {
+function ngramsWorker(sequence: string | string[], n: number, startSymbol: string, endSymbol: string) {
     var result = [];
     
-    if (!_(sequence).isArray()) {
+    if (!_.isArray(sequence)) {
         sequence = tokenizer.tokenize(sequence);
     }
 

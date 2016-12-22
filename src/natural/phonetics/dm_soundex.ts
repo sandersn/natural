@@ -78,7 +78,11 @@ THE SOFTWARE.
  *   1: before a vowel;
  *   2: any other situation.
  */
-var codes = {
+type State = {
+    0?: number[],
+    [s: string]: (number | number[])[] | State
+};
+var codes: State = {
     A: {
         0: [0, -1, -1],
         I: [[0, 1, -1]],
@@ -175,8 +179,7 @@ var codes = {
 };
 
 
-function process(word, codeLength) {
-	codeLength = codeLength || 6;
+function process(word: string, codeLength = 6) {
     word = word.toUpperCase();
     var output = '';
 
@@ -207,15 +210,15 @@ function process(word, codeLength) {
 }
 
 
-function findRules(str) {
-    var state = codes[str[0]];
+function findRules(str: string) {
+    var state = codes[str[0]] as State;
     var legalState = state || [[-1,-1,-1]],
         charsInvolved = 1;
 
     for (var offs = 1; offs < str.length; offs++) {
         if (!state || !state[str[offs]]) break;
 
-        state = state[str[offs]];
+        state = state[str[offs]] as State;
         if (state[0]) {
             legalState = state;
             charsInvolved = offs + 1;
@@ -232,7 +235,7 @@ function findRules(str) {
 /**
  * Pad right with zeroes or cut excess symbols to fit length
  */
-function normalizeLength(token, length) {
+function normalizeLength(token: string, length: number) {
 	length = length || 6;
 	if (token.length < length) {
 		token += (new Array(length - token.length + 1)).join('0');
@@ -240,8 +243,5 @@ function normalizeLength(token, length) {
     return token.slice(0, length);
 }
 
-import Phonetic = require('./phonetic');
-var soundex = new Phonetic();
-soundex.process = process;
-export = soundex;
-
+import { Phonetic, createPhonetic } from './phonetic';
+export = createPhonetic(process);

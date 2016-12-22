@@ -20,9 +20,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import Phonetic = require('./phonetic');
+import { Phonetic, createPhonetic } from './phonetic';
 
-var DoubleMetaphone = new Phonetic();
+var DoubleMetaphone = createPhonetic(process) as DoubleMetaphone;
 export = DoubleMetaphone;
 
 function isVowel(c: string) {
@@ -41,24 +41,24 @@ function process(token: string, maxLength = 32) {
     var primary = '', secondary = '';	
     var pos = 0;
 
-    function subMatch(startOffset, stopOffset, terms) {
+    function subMatch(startOffset: number, stopOffset: number, terms: string[]) {
         return subMatchAbsolute(pos + startOffset, pos + stopOffset, terms);
     }
 
-    function subMatchAbsolute(startOffset, stopOffset, terms) {
+    function subMatchAbsolute(startOffset: number, stopOffset: number, terms: string[]) {
         return terms.indexOf(token.substring(startOffset, stopOffset)) > -1;
     }
 
-    function addSecondary(primaryAppendage, secondaryAppendage) {
+    function addSecondary(primaryAppendage: string, secondaryAppendage: string) {
     	primary += primaryAppendage;
     	secondary += secondaryAppendage;
     }
 
-    function add(primaryAppendage) {
+    function add(primaryAppendage: string) {
     	addSecondary(primaryAppendage, primaryAppendage);
     }
 
-    function addCompressedDouble(c, encoded?) {
+    function addCompressedDouble(c: string, encoded?: string) {
     	if(token[pos + 1] == c)
     		pos++;
     	add(encoded || c);
@@ -497,13 +497,17 @@ function process(token: string, maxLength = 32) {
     return [truncate(primary, maxLength), truncate(secondary, maxLength)];
 }
 
-function compare(stringA, stringB) {
+function compare(stringA: string, stringB: string) {
     var encodingsA = process(stringA),
         encodingsB = process(stringB);
 
     return encodingsA[0] == encodingsB[0] || 
         encodingsA[1] == encodingsB[1];
 };
+
+interface DoubleMetaphone extends Phonetic {
+    isVowel(s: string): RegExpMatchArray;
+}
 
 DoubleMetaphone.compare = compare
 DoubleMetaphone.process = process;

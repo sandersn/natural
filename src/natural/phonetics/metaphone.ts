@@ -20,24 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Phonetic = require('./phonetic');
+import { Phonetic, createPhonetic } from './phonetic';
 
-function dedup(token) {
+function dedup(token: string) {
     return token.replace(/([^c])\1/g, '$1');
 }
 
-function dropInitialLetters(token) {
+function dropInitialLetters(token: string) {
     if(token.match(/^(kn|gn|pn|ae|wr)/))
         return token.substr(1, token.length - 1);
         
     return token;
 }
 
-function dropBafterMAtEnd(token) {
+function dropBafterMAtEnd(token: string) {
     return token.replace(/mb$/, 'm');
 }
 
-function cTransform(token) {
+function cTransform(token: string) {
     
 
     token = token.replace(/([^s]|^)(c)(h)/g, '$1x$3').trim();
@@ -50,21 +50,21 @@ function cTransform(token) {
     return token;
 }
 
-function dTransform(token) {
+function dTransform(token: string) {
     token = token.replace(/d(ge|gy|gi)/g, 'j$1');
     token = token.replace(/d/g, 't');
     
     return token;
 }
 
-function dropG(token) {
+function dropG(token: string) {
     token = token.replace(/gh(^$|[^aeiou])/g, 'h$1');
     token = token.replace(/g(n|ned)$/g, '$1');    
     
     return token;
 }
 
-function transformG(token) {
+function transformG(token: string) {
     token = token.replace(/gh/g, 'f'); 
     token = token.replace(/([^g]|^)(g)(i|e|y)/g, '$1j$3');
     token = token.replace(/gg/g, 'g');
@@ -73,71 +73,93 @@ function transformG(token) {
     return token;
 }
 
-function dropH(token) {
+function dropH(token: string) {
     return token.replace(/([aeiou])h([^aeiou]|$)/g, '$1$2');
 }
 
-function transformCK(token) {
+function transformCK(token: string) {
     return token.replace(/ck/g, 'k');
 }
-function transformPH(token) {
+function transformPH(token: string) {
     return token.replace(/ph/g, 'f');
 }
 
-function transformQ(token) {
+function transformQ(token: string) {
     return token.replace(/q/g, 'k');
 }
 
-function transformS(token) {
+function transformS(token: string) {
     return token.replace(/s(h|io|ia)/g, 'x$1');
 }
 
-function transformT(token) {
+function transformT(token: string) {
     token = token.replace(/t(ia|io)/g, 'x$1');
     token = token.replace(/th/, '0');
     
     return token;
 }
 
-function dropT(token) {
+function dropT(token: string) {
     return token.replace(/tch/g, 'ch');
 }
 
-function transformV(token) {
+function transformV(token: string) {
     return token.replace(/v/g, 'f');
 }
 
-function transformWH(token) {
+function transformWH(token: string) {
     return token.replace(/^wh/, 'w');
 }
 
-function dropW(token) {
+function dropW(token: string) {
     return token.replace(/w([^aeiou]|$)/g, '$1');
 }
 
-function transformX(token) {
+function transformX(token: string) {
     token = token.replace(/^x/, 's');
     token = token.replace(/x/g, 'ks');
     return token;
 }
 
-function dropY(token) {
+function dropY(token: string) {
     return token.replace(/y([^aeiou]|$)/g, '$1');
 }
 
-function transformZ(token) {
+function transformZ(token: string) {
     return token.replace(/z/, 's');
 }
 
-function dropVowels(token) {
+function dropVowels(token: string) {
     return token.charAt(0) + token.substr(1, token.length).replace(/[aeiou]/g, '');
 }
 
-var Metaphone = new Phonetic();
-module.exports = Metaphone;
 
-Metaphone.process = function(token, maxLength) {
-    maxLength == maxLength || 32;
+interface Metaphone extends Phonetic {
+    dedup(token: string): string;
+    dropInitialLetters(token: string): string;
+    dropBafterMAtEnd(token: string): string;
+    cTransform(token: string): string;
+    dTransform(token: string): string;
+    dropG(token: string): string;
+    transformG(token: string): string;
+    dropH(token: string): string;
+    transformCK(token: string): string;
+    transformPH(token: string): string;
+    transformQ(token: string): string;
+    transformS(token: string): string;
+    transformT(token: string): string;
+    dropT(token: string): string;
+    transformV(token: string): string;
+    transformWH(token: string): string;
+    dropW(token: string): string;
+    transformX(token: string): string;
+    dropY(token: string): string;
+    transformZ(token: string): string;
+    dropVowels(token: string): string;
+}
+
+export = Metaphone;
+function process(token: string, maxLength = 32) {
     token = token.toLowerCase();
     token = dedup(token);
     token = dropInitialLetters(token);
@@ -166,7 +188,10 @@ Metaphone.process = function(token, maxLength) {
         token = token.substring(0, maxLength);        
 
     return token.toUpperCase();
-};
+}
+var testFunctions = { dedup, dropInitialLetters };
+
+var Metaphone: Metaphone = createPhonetic(process) as Metaphone;
 
 // expose functions for testing    
 Metaphone.dedup = dedup;

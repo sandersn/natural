@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-var Phonetic = require('./phonetic');
+import { Phonetic, createPhonetic } from './phonetic';
 
 function transformLipps(token: string) {
     return token.replace(/[bfpv]/g, '1');
@@ -61,11 +61,21 @@ function transform(token: string) {
     return transformLipps(transformThroats(
         transformToungue(transformL(transformHum(transformR(token))))));
 }
+interface SoundEx extends Phonetic {
+    transformLipps(token: string): string;
+    transformThroats(token: string): string;
+    transformToungue(token: string): string;
+    transformL(token: string): string;
+    transformHum(token: string): string;
+    transformR(token: string): string;
+    condense(token: string): string;
+    padRight0(token: string): string;
+}
 
-var SoundEx = new Phonetic();
+var SoundEx = createPhonetic(process) as SoundEx;
 export = SoundEx;
 
-SoundEx.process = function(token: string, maxLength: number) {
+function process(token: string, maxLength: number) {
     token = token.toLowerCase();    
     var transformed = condense(transform(token.substr(1, token.length - 1))); // anything that isn't a digit goes
     // deal with duplicate INITIAL consonant SOUNDS

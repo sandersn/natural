@@ -24,31 +24,39 @@ import stopwords = require('../util/stopwords');
 import Tokenizer = require('../tokenizers/aggressive_tokenizer');
 var tokenizer = new Tokenizer();
 
-export = function() {
-    this.compare = function(stringA, stringB) {
-        return this.process(stringA) == this.process(stringB);
+export interface Phonetic {
+    compare(sa: string, sb: string): boolean;
+    attach(): void;
+    process(token: string, maxLength?: number): string | string[];
+}
+export function createPhonetic(process: (s: string, maxLength?: number) => string | string[]): Phonetic {
+    return {
+        process,
+        compare(stringA: string, stringB: string) {
+            return process(stringA) == process(stringB);
+        },
+
+        attach(this: Phonetic) {
+            var phonetic = this;
+
+            (String.prototype as any).soundsLike = function(this: string, compareTo: string) {
+                return phonetic.compare(this, compareTo);
+            };
+
+            (String.prototype as any).phonetics = function(this: string) {
+                return phonetic.process(this);
+            };
+
+            (String.prototype as any).tokenizeAndPhoneticize = function(this: string, keepStops: boolean) {
+                var phoneticizedTokens = [];
+
+                for (const token of tokenizer.tokenize(this)) {
+                    if (keepStops || stopwords.words.indexOf(token) < 0)
+                        phoneticizedTokens.push((token as any).phonetics());
+                }
+
+                return phoneticizedTokens;
+            };
+        }
     };
-
-    this.attach = function() {
-	var phonetic = this;
-
-        (String.prototype as any).soundsLike = function(compareTo) {
-            return phonetic.compare(this, compareTo);
-        };
-
-        (String.prototype as any).phonetics = function() {
-            return phonetic.process(this);
-        };
-
-        (String.prototype as any).tokenizeAndPhoneticize = function(keepStops) {
-            var phoneticizedTokens = [];
-
-            tokenizer.tokenize(this).forEach(function(token) {
-                if(keepStops || stopwords.words.indexOf(token) < 0)
-                    phoneticizedTokens.push(token.phonetics());
-            });
-
-            return phoneticizedTokens;
-        };
-    };
-};
+}

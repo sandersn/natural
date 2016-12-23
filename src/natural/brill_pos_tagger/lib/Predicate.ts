@@ -20,7 +20,7 @@ import log4js = require('log4js');
 var logger = log4js.getLogger();
 logger.setLevel('WARN');
 
-var predicates = {
+var predicates: { [s: string]: (sentence: [string, string][], i: number, parameter_1: string, parameter_2: string) => boolean } = {
     // Predicates as used in the English rules in data/English/tr_from_posjs.txt
     "NEXT-TAG": next_tag_is,
     "NEXT-WORD-IS-CAP": next_word_is_cap,
@@ -44,7 +44,7 @@ var predicates = {
     "NEXT1OR2OR3TAG": next_1_or_2_or_3_tag,
     "CURWD": current_word_is,
     "SURROUNDTAG": surrounded_by_tags,
-    "PREV1OR2OR3TAG": prev_1_or_2_or_3_tag, 
+    "PREV1OR2OR3TAG": prev_1_or_2_or_3_tag,
     "WDNEXTTAG": current_word_and_next_tag_are,
     "PREV1OR2WD": prev_1_or_2_word_is,
     "NEXTWD": next_word_is,
@@ -64,7 +64,7 @@ var predicates = {
 // ==================================
 // Predicates that start with words
 // ==================================
-function next_word_is_cap(tagged_sentence, i, parameter) {
+function next_word_is_cap(tagged_sentence: [string, string][], i: number, parameter: string) {
   if (i < tagged_sentence.length - 1) {
     var next_word = tagged_sentence[i+1][0];
     return(next_word[0] === next_word[0].toUpperCase());
@@ -74,13 +74,13 @@ function next_word_is_cap(tagged_sentence, i, parameter) {
   }
 }
 
-function next_word_is(tagged_sentence, i, parameter) {
+function next_word_is(tagged_sentence: [string, string][], i: number, parameter: string) {
   if (i < tagged_sentence.length - 1) {
     return(tagged_sentence[i+1][0] === parameter);
   }
 }
 
-function prev_word_is_cap(tagged_sentence, i, parameter) {
+function prev_word_is_cap(tagged_sentence: [string, string][], i: number, parameter: string) {
   var prev_word = null;
   if (i > 0) {
     prev_word = tagged_sentence[i-1][0];
@@ -89,31 +89,31 @@ function prev_word_is_cap(tagged_sentence, i, parameter) {
   return(false);
 }
 
-function current_word_is_cap(tagged_sentence, i, parameter) {
+function current_word_is_cap(tagged_sentence: [string, string][], i: number, parameter: string) {
   var current_word = tagged_sentence[i][0];
   return(current_word[0] === current_word[0].toUpperCase());
 }
 
-function current_word_is(tagged_sentence, i, parameter) {
+function current_word_is(tagged_sentence: [string, string][], i: number, parameter: string) {
   return(tagged_sentence[i][0] === parameter);
 }
 
-function isNumeric(num) {
+function isNumeric(num: any) {
   return (!isNaN(num));
 }
 
-function current_word_is_number(tagged_sentence, i, parameter) {
+function current_word_is_number(tagged_sentence: [string, string][], i: number, parameter: string) {
     var is_number: number | boolean = isNumeric(tagged_sentence[i][0]);
     // Attempt to parse it as a float
     if (!is_number) {
         is_number = parseFloat(tagged_sentence[i][0]);
     }
-    return((parameter === "YES") ? is_number : !is_number);
+    return((parameter === "YES") ? !!is_number : !is_number);
 }
 
 // Checks if the current word is a url
 // Adapted from the original Javascript Brill tagger
-function current_word_is_url(tagged_sentence, i, parameter) {
+function current_word_is_url(tagged_sentence: [string, string][], i: number, parameter: string) {
   var is_url = false;
   if (tagged_sentence[i][0].indexOf(".") > -1) {
     // url if there are two contiguous alpha characters
@@ -124,7 +124,7 @@ function current_word_is_url(tagged_sentence, i, parameter) {
   return((parameter === "YES") ? is_url : !is_url);
 };
 
-function current_word_and_2_tag_after_are(tagged_sentence, i, parameter1, parameter2) {
+function current_word_and_2_tag_after_are(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
   if (i < tagged_sentence.length - 2) {
     if (tagged_sentence[i+2][1] === parameter2) {
       return(tagged_sentence[i][0] === parameter1);
@@ -138,7 +138,7 @@ function current_word_and_2_tag_after_are(tagged_sentence, i, parameter1, parame
   }
 }
 
-function current_word_and_next_tag_are(tagged_sentence, i, parameter1, parameter2) {
+function current_word_and_next_tag_are(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
   var next_tag = false;
   // check current word
   var current_word = (tagged_sentence[i][0] === parameter1);
@@ -149,7 +149,7 @@ function current_word_and_next_tag_are(tagged_sentence, i, parameter1, parameter
   return(current_word && next_tag);
 }
 
-function current_word_and_prev_tag_are(tagged_sentence, i, parameter1, parameter2) {
+function current_word_and_prev_tag_are(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
   var prev_tag = false;
   // check current word
   var current_word = (tagged_sentence[i][0] === parameter2);
@@ -160,7 +160,7 @@ function current_word_and_prev_tag_are(tagged_sentence, i, parameter1, parameter
   return(current_word && prev_tag);
 }
 
-function current_word_and_2_tag_before_are(tagged_sentence, i, parameter1, parameter2) {
+function current_word_and_2_tag_before_are(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
   var two_tags_before = false;
   // check current word
   var current_word = (tagged_sentence[i][0] === parameter2);
@@ -171,17 +171,17 @@ function current_word_and_2_tag_before_are(tagged_sentence, i, parameter1, param
   return(current_word && two_tags_before);
 }
 
-function current_word_and_2_after_are(tagged_sentence, i, parameter1, parameter2) {
+function current_word_and_2_after_are(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
    var two_words_after = false;
   // check current word
   var current_word = (tagged_sentence[i][0] === parameter1);
-  if (i < tagged_sentence - 2) {
+  if (i < tagged_sentence.length - 2) {
     two_words_after = (tagged_sentence[i+2][0] === parameter2);
   }
   return(current_word && two_words_after);
 }
 
-function prev_word_is(tagged_sentence, i, parameter) {
+function prev_word_is(tagged_sentence: [string, string][], i: number, parameter: string) {
   if (i > 0) {
     return(tagged_sentence[i-1][0].toLowerCase() === parameter.toLowerCase());
   }
@@ -190,7 +190,7 @@ function prev_word_is(tagged_sentence, i, parameter) {
   }
 };
 
-function prev_1_or_2_word_is(tagged_sentence, i, parameter) {
+function prev_1_or_2_word_is(tagged_sentence: [string, string][], i: number, parameter: string) {
   var prev_1 = false;
   var prev_2 = false;
   if (i > 0) {
@@ -204,7 +204,7 @@ function prev_1_or_2_word_is(tagged_sentence, i, parameter) {
 
 // Indicates whether or not this string ends with the specified string.
 // Adapted from the original Javascript Brill tagger
-function current_word_ends_with(tagged_sentence, i, parameter) {
+function current_word_ends_with(tagged_sentence: [string, string][], i: number, parameter: string) {
   var word = tagged_sentence[i][0];
   if (!parameter || (parameter.length > word.length)) {
     return false;
@@ -212,7 +212,7 @@ function current_word_ends_with(tagged_sentence, i, parameter) {
   return(word.indexOf(parameter) === (word.length - parameter.length));
 }
 
-function right_bigram_is(tagged_sentence, i, parameter1, parameter2) {
+function right_bigram_is(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
   var word_1 = (tagged_sentence[i][0] === parameter1);
   var word_2 = false;
   if (i < tagged_sentence.length - 1) {
@@ -221,7 +221,7 @@ function right_bigram_is(tagged_sentence, i, parameter1, parameter2) {
   return(word_1 && word_2);
 }
 
-function left_bigram_is(tagged_sentence, i, parameter1, parameter2) {
+function left_bigram_is(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
   var word_1 = false;
   var word_2 = (tagged_sentence[i][0] === parameter2);
   if (i > 0) {
@@ -230,7 +230,7 @@ function left_bigram_is(tagged_sentence, i, parameter1, parameter2) {
   return(word_1 && word_2);
 }
 
-function next_bigram_is(tagged_sentence, i, parameter1, parameter2) {
+function next_bigram_is(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
   var word_1 = false;
   var word_2 = false;
   if (i < tagged_sentence.length - 1) {
@@ -242,7 +242,7 @@ function next_bigram_is(tagged_sentence, i, parameter1, parameter2) {
   return(word_1 && word_2);
 }
 
-function prev_bigram_is(tagged_sentence, i, parameter1, parameter2) {
+function prev_bigram_is(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
   var word_1 = false;
   var word_2 = false;
   if (i >  1) {
@@ -254,7 +254,7 @@ function prev_bigram_is(tagged_sentence, i, parameter1, parameter2) {
   return(word_1 && word_2);
 }
 
-function next_1_or_2_word_is(tagged_sentence, i, parameter1, parameter2) {
+function next_1_or_2_word_is(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
   var next_1 = false;
   var next_2 = false;
   if (i < tagged_sentence.length - 1) {
@@ -269,7 +269,7 @@ function next_1_or_2_word_is(tagged_sentence, i, parameter1, parameter2) {
 // ==================================
 // Predicates about tags
 // ==================================
-function next_tag_is(tagged_sentence, i, parameter) {
+function next_tag_is(tagged_sentence: [string, string][], i: number, parameter: string) {
   if (i < tagged_sentence.length - 1) {
     return(tagged_sentence[i+1][1] === parameter);
   }
@@ -278,7 +278,7 @@ function next_tag_is(tagged_sentence, i, parameter) {
   }
 }
 
-function next_2_tag_is(tagged_sentence, i, parameter) {
+function next_2_tag_is(tagged_sentence: [string, string][], i: number, parameter: string) {
   if (i < tagged_sentence.length - 2) {
     return(tagged_sentence[i+2][1] === parameter);
   }
@@ -287,7 +287,7 @@ function next_2_tag_is(tagged_sentence, i, parameter) {
   }
 }
 
-function next_1_or_2_tag_is(tagged_sentence, i, parameter) {
+function next_1_or_2_tag_is(tagged_sentence: [string, string][], i: number, parameter: string) {
   var next_1 = false;
   var next_2 = false;
   if (i < tagged_sentence.length - 1) {
@@ -299,7 +299,7 @@ function next_1_or_2_tag_is(tagged_sentence, i, parameter) {
   return(next_1 || next_2);
 }
 
-function next_1_or_2_or_3_tag(tagged_sentence, i, parameter) {
+function next_1_or_2_or_3_tag(tagged_sentence: [string, string][], i: number, parameter: string) {
   var next_1 = false;
   var next_2 = false;
   var next_3 = false;
@@ -315,7 +315,7 @@ function next_1_or_2_or_3_tag(tagged_sentence, i, parameter) {
   return(next_1 || next_2 || next_3);
 }
 
-function surrounded_by_tags(tagged_sentence, i, parameter1, parameter2) {
+function surrounded_by_tags(tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) {
   if (i < tagged_sentence.length - 1) {
     // check next tag
     if (tagged_sentence[i+1][1] === parameter2) {
@@ -336,7 +336,7 @@ function surrounded_by_tags(tagged_sentence, i, parameter1, parameter2) {
   }
 }
 
-function prev_1_or_2_or_3_tag(tagged_sentence, i, parameter) {
+function prev_1_or_2_or_3_tag(tagged_sentence: [string, string][], i: number, parameter: string) {
   var prev_1 = null;
   if (i > 0) {
     prev_1 = tagged_sentence[i-1][1];
@@ -352,7 +352,7 @@ function prev_1_or_2_or_3_tag(tagged_sentence, i, parameter) {
   return((prev_1 === parameter) || (prev_2 === parameter) || (prev_3 === parameter));
 }
 
-function prev_1_or_2_tag(tagged_sentence, i, parameter) {
+function prev_1_or_2_tag(tagged_sentence: [string, string][], i: number, parameter: string) {
   var prev_1 = null;
   if (i > 0) {
     prev_1 = tagged_sentence[i-1][1];
@@ -364,7 +364,7 @@ function prev_1_or_2_tag(tagged_sentence, i, parameter) {
   return((prev_1 === parameter) || (prev_2 === parameter));
 }
 
-function prev_tag_is(tagged_sentence, i, parameter) {
+function prev_tag_is(tagged_sentence: [string, string][], i: number, parameter: string) {
   var prev = false;
   if (i > 0) {
     prev = (tagged_sentence[i-1][1] === parameter);
@@ -372,11 +372,11 @@ function prev_tag_is(tagged_sentence, i, parameter) {
   return(prev);
 }
 
-function current_word_is_tag(tagged_sentence, i, parameter) {
+function current_word_is_tag(tagged_sentence: [string, string][], i: number, parameter: string) {
   return(tagged_sentence[i][0] === parameter);
 }
 
-function prev_2_tag_is(tagged_sentence, i, parameter) {
+function prev_2_tag_is(tagged_sentence: [string, string][], i: number, parameter: string) {
   var prev_2 = false;
   if (i > 1) {
     prev_2 = (tagged_sentence[i-2][1] === parameter);
@@ -384,17 +384,17 @@ function prev_2_tag_is(tagged_sentence, i, parameter) {
   return(prev_2);
 }
 
-function default_transformation_rule (tagged_sentence, i, parameter) {
+function default_transformation_rule (tagged_sentence: [string, string][], i: number, parameter: string) {
   return(false);
 }
 
 class Predicate {
     name: string;
-    parameter1;
-    parameter2;
-    function: (tagged_sentence, i, parameter1, parameter2) => boolean;
-    predicate: (tagged_sentence, i, parameter1) => boolean;
-    constructor(name, parameter1, parameter2?) {
+    parameter1: string;
+    parameter2: string;
+    function: (tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) => boolean;
+    predicate: (tagged_sentence: [string, string][], i: number, parameter1: string) => boolean;
+    constructor(name: string, parameter1: string, parameter2?: string) {
         this.name = name;
         this.parameter1 = parameter1;
         if (parameter2) {
@@ -409,7 +409,7 @@ class Predicate {
         logger.debug(this.function.toString());
     }
 
-    evaluate(tagged_sentence, position) {
+    evaluate(tagged_sentence: [string, string][], position: number) {
         return(this.function(tagged_sentence, position, this.parameter1, this.parameter2));
     }
 }

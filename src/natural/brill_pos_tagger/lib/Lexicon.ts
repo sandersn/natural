@@ -22,10 +22,8 @@ var logger = log4js.getLogger();
 
 // Parses a lexicon in JSON or text format
 class Lexicon {
-    defaultCategory;
-    lexicon;
-    constructor(filename, defaultCategory) {
-        this.defaultCategory = defaultCategory;
+    lexicon: { [s: string]: string[] };
+    constructor(filename: string, public defaultCategory: string) {
 
         // Read lexicon
         try {
@@ -40,13 +38,13 @@ class Lexicon {
             }
             logger.debug('Brill_POS_Tagger.read_lexicon: number of lexicon entries read: ' + Object.keys(this.lexicon).length);
         }
-        catch(error) {
+        catch (error) {
             logger.error(error);
         }
     }
 
     // Parses a lexicon in text format: word cat1 cat2 ... catn
-    parseLexicon(data) {
+    parseLexicon(data: string) {
         // Split into an array of non-empty lines
         var arrayOfLines = data.match(/[^\r\n]+/g);
         this.lexicon = {};
@@ -60,7 +58,7 @@ class Lexicon {
     };
 
     // Returns a list of categories for word
-    tagWord(word) {
+    tagWord(word: string) {
         var categories = this.lexicon[word];
         if (!categories) {
             categories = this.lexicon[word.toLowerCase()];

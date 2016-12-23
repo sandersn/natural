@@ -25,32 +25,31 @@ import TF_Parser = require('./TF_Parser');
 
 logger.setLevel('WARN');
 
-// Tags a sentence, sentence is an array of words
-// Returns an array of tagged words; a tagged words is an array consisting of
-// the word itself followed by its lexical category
-Brill_POS_Tagger.prototype.tag = function(sentence) {
-  var taggedSentence = new Array(sentence.length);
-  
-  var that = this;
-  sentence.forEach(function(word, index) {
-    taggedSentence[index] = [];
-    taggedSentence[index][0] = word;
-    var categories = that.lexicon.tagWord(word);
-    taggedSentence[index][1] = categories[0];
-  });
+class Brill_POS_Tagger {
+    constructor(public lexicon: { tagWord(s: string): string[] }, public ruleSet: { rules: any[] }) {
+    }
 
-  // Apply transformation rules
-  for (var i = 0, size = sentence.length; i < size; i++) {
-    this.ruleSet.rules.forEach(function(rule) {
-      rule.apply(taggedSentence, i);
-    });
-  }
-  return(taggedSentence);
-};
+    // Tags a sentence, sentence is an array of words
+    // Returns an array of tagged words; a tagged words is an array consisting of
+    // the word itself followed by its lexical category
+    tag(sentence: string[]) {
+        var taggedSentence: [string, string][] = new Array(sentence.length);
+        
+        var that = this;
+        sentence.forEach(function(word, index) {
+            var categories = that.lexicon.tagWord(word);
+            taggedSentence[index] = [word, categories[0]];
+        });
 
-function Brill_POS_Tagger(lexicon, ruleSet) {
-  this.lexicon = lexicon;
-  this.ruleSet = ruleSet;
+        // Apply transformation rules
+        for (var i = 0, size = sentence.length; i < size; i++) {
+            this.ruleSet.rules.forEach(function(rule) {
+                rule.apply(taggedSentence, i);
+            });
+        }
+        return(taggedSentence);
+    }
+
+
 }
-
 export = Brill_POS_Tagger;

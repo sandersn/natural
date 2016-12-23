@@ -21,19 +21,20 @@ var logger = log4js.getLogger();
 import fs = require("fs");
 import TF_Parser = require('./TF_Parser');
 
-function RuleSet(filename) {
-  var that = this;
-
-  // Read transformation rules
-  try {
-    var data = fs.readFileSync(filename, 'utf8');
-    this.rules = TF_Parser.parse(data);
-    logger.debug(this.rules);
-    logger.debug('Brill_POS_Tagger.read_transformation_rules: number of transformation rules read: ' + this.rules.length);
-  }
-  catch(error) {
-    logger.error(error);
-  }
+class RuleSet {
+    rules: any[];
+    constructor(filename: string) {
+        // Read transformation rules
+        try {
+            var data = fs.readFileSync(filename, 'utf8');
+            this.rules = TF_Parser.parse(data);
+            logger.debug(this.rules.toString());
+            logger.debug('Brill_POS_Tagger.read_transformation_rules: number of transformation rules read: ' + this.rules.length);
+        }
+        catch(error) {
+            logger.error(error);
+        }
+    }
 }
 
 export = RuleSet;

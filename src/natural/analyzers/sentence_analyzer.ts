@@ -60,7 +60,7 @@ class Sentences {
         punct(): Punctuation;
     };
     senType: string | null;
-    constructor(pos, callback) {
+    constructor(pos: { tags: Tag[], punct(): Punctuation }, callback: (arg: Sentences) => void) {
         this.posObj = pos;
         this.senType = null;
         callback(this);

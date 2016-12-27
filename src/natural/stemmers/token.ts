@@ -58,12 +58,12 @@ class Token {
      * @param  context  Callback context (optional, defaults to this).
      * @return Token instance.
      */
-    markRegion(region: string, args: number | number[], callback?: (...ns: number[]) => number, context?: any) {
+    markRegion(region: string, args: number | number[] | null, callback?: (...ns: number[]) => number, context?: any) {
         if (typeof callback === 'function') {
-            this.regions[region] = callback.apply(context || this, [].concat(args));
+            this.regions[region] = callback.apply(context || this, ([] as (number | null)[]).concat(args));
 
         } else if (!isNaN(args as number)) {
-            this.regions[region] = args;
+            this.regions[region] = args as number;
         }
 
         return this;
@@ -90,7 +90,7 @@ class Token {
      * @return Token instance.
      */
     replaceSuffixInRegion(suffix: string | string[], replace: string, region: string) {
-        var suffixes = [].concat(suffix);
+        var suffixes = ([] as string[]).concat(suffix);
         for (var i = 0; i < suffixes.length; i++) {
             if (this.hasSuffixInRegion(suffixes[i], region)) {
                 this.string = this.string.slice(0, -suffixes[i].length) + replace;

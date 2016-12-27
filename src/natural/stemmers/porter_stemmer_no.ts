@@ -138,7 +138,7 @@ function step3(token: string) {
 }
 
 interface PorterStemmer extends Stemmer {
-    getR1: (token: string) => string;
+    getR1: (token: string) => string | null;
     step1: (token: string) => string;
     step1a: (token: string) => string;
     step1b: (token: string) => string;

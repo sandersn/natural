@@ -25,8 +25,11 @@ import { Phonetic, createPhonetic } from './phonetic';
 var DoubleMetaphone = createPhonetic(process) as DoubleMetaphone;
 export = DoubleMetaphone;
 
-function isVowel(c: string) {
-	return c && c.match(/[aeiouy]/i);
+function isVowel(c: string | null): RegExpMatchArray | null {
+    if (c) {
+        return c.match(/[aeiouy]/i);
+    }
+    return null;
 }
 
 function truncate(string: string, length: number): string {
@@ -506,7 +509,7 @@ function compare(stringA: string, stringB: string) {
 };
 
 interface DoubleMetaphone extends Phonetic {
-    isVowel(s: string): RegExpMatchArray;
+    isVowel(s: string): RegExpMatchArray | null;
 }
 
 DoubleMetaphone.compare = compare

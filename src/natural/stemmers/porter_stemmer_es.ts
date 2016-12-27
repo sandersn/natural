@@ -75,7 +75,7 @@ PorterStemmer.stem = function(token: string) {
 		return token;
 	}
 
-        var r1: number;
+        var r1 = -1;
         var r2,rv,len= token.length;
 	//looking for regions after vowels
 

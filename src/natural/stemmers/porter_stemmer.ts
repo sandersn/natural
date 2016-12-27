@@ -35,7 +35,7 @@ function categorizeChars(token: string) {
 
 // calculate the "measure" M of a word. M is the count of VC sequences dropping
 // an initial C if it exists and a trailing V if it exists.
-function measure(token: string) {
+function measure(token: string | null) {
     if(!token)
     	return -1;
 
@@ -50,7 +50,7 @@ function endsWithDoublCons(token: string) {
 // replace a pattern in a word. if a replacement occurs an optional callback
 // can be called to post-process the result. if no match is made NULL is
 // returned.
-function attemptReplace(token: string, pattern: string | RegExp, replacement: string, callback?: (result: string) => string) {
+function attemptReplace(token: string, pattern: string | RegExp, replacement: string, callback?: (result: string) => string | null): string | null {
     var result = null;
 
     if((typeof pattern == 'string') && token.substr(0 - pattern.length) == pattern)
@@ -66,10 +66,10 @@ function attemptReplace(token: string, pattern: string | RegExp, replacement: st
 
 // attempt to replace a list of patterns/replacements on a token for a minimum
 // measure M.
-function attemptReplacePatterns(token: string, replacements: [string | RegExp, string, string][], measureThreshold: number = null) {
+function attemptReplacePatterns(token: string, replacements: [string | RegExp, string, string][], measureThreshold: number | null = null) {
     var replacement = token;
 
-    for(var i = 0; i < replacements.length; i++) {   
+    for(var i = 0; i < replacements.length; i++) {
     	if(measureThreshold == null || measure(attemptReplace(token, replacements[i][0], replacements[i][1])) > measureThreshold) {
     	    replacement = attemptReplace(replacement, replacements[i][0], replacements[i][2]) || replacement;
         }
@@ -91,9 +91,10 @@ function replaceRegex(token: string, regex: RegExp, includeParts: number[], mini
 
     if(regex.test(token)) {
         parts = regex.exec(token);
-
-        for (const i of includeParts) {
-            result += parts[i];
+        if (parts) {
+            for (const i of includeParts) {
+                result += parts[i];
+            }
         }
     }
 
@@ -123,7 +124,7 @@ function step1b(token: string) {
         if(measure(token.substr(0, token.length - 3)) > 0)
             return token.replace(/eed$/, 'ee');
     } else {
-        var result: string = attemptReplace(token, /(ed|ing)$/, '', function(token) {
+        var result = attemptReplace(token, /(ed|ing)$/, '', function(token) {
             if(categorizeGroups(token).indexOf('V') >= 0) {
                 var whatever = attemptReplacePatterns(token, [['at', '', 'ate'],  ['bl', '', 'ble'], ['iz', '', 'ize']]);
 

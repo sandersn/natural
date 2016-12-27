@@ -34,28 +34,27 @@ export class RegexpTokenizer extends Tokenizer {
     _pattern: string | RegExp;
     discardEmpty: boolean;
     _gaps: boolean;
-    constructor(options: RegexpOptions) {
+    constructor(options?: RegexpOptions) {
         super();
         options = options || {};
         this._pattern = options.pattern || this._pattern;
         this.discardEmpty = options.discardEmpty || true;
 
         // Match and split on GAPS not the actual WORDS
-        this._gaps = options.gaps;
-        
-        if (this._gaps === undefined) {
+        if (options.gaps === undefined) {
             this._gaps = true;
+        }
+        else {
+            this._gaps = options.gaps;
         }
     }
 
     tokenize(s: string) {
-        var results;
-
         if (this._gaps) {
-            results = typeof this._pattern === "string" ? s.split(this._pattern) : s.split(this._pattern);
-            return (this.discardEmpty) ? _.without(results,'',' ') : results;
+            var results = s.split(this._pattern as string);
+            return this.discardEmpty ? _.without(results,'',' ') : results;
         } else {
-            return typeof this._pattern === "string" ? s.match(this._pattern) : s.match(this._pattern);
+            return s.match(this._pattern as string) || [];
         }
     }
 }

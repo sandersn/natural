@@ -20,7 +20,7 @@ interface Expected {
 
 export class SyntaxError extends Error {
     name: string;
-    constructor(public message: string, public expected: Expected[], public found: string, public offset: number, public line: number, public column: number) {
+    constructor(public message: string, public expected: Expected[] | null, public found: string | null, public offset: number, public line: number, public column: number) {
         super();
         this.name     = "SyntaxError";
     }
@@ -90,11 +90,11 @@ export function parse(input: string, options: { startRule?: string } = {}) {
     peg$result;
 
     if ("startRule" in options) {
-        if (!(options.startRule in peg$startRuleFunctions)) {
+        if (!(options.startRule! in peg$startRuleFunctions)) {
             throw new Error("Can't start parsing from rule \"" + options.startRule + "\".");
         }
 
-        peg$startRuleFunction = peg$startRuleFunctions[options.startRule];
+        peg$startRuleFunction = peg$startRuleFunctions[options.startRule!];
     }
 
     function text() {
@@ -169,7 +169,7 @@ export function parse(input: string, options: { startRule?: string } = {}) {
         peg$maxFailExpected.push(expected);
     }
 
-    function peg$buildException(message: string, expected: Expected[], pos: number) {
+    function peg$buildException(message: string | null, expected: Expected[] | null, pos: number) {
         function cleanupExpected(expected: Expected[]) {
             var i = 1;
 
@@ -192,7 +192,7 @@ export function parse(input: string, options: { startRule?: string } = {}) {
             }
         }
 
-        function buildMessage(expected: Expected[], found: string) {
+        function buildMessage(expected: Expected[], found: string | null) {
             function stringEscape(s: string) {
                 function hex(ch: string) { return ch.charCodeAt(0).toString(16).toUpperCase(); }
 
@@ -237,7 +237,7 @@ export function parse(input: string, options: { startRule?: string } = {}) {
         }
 
         return new SyntaxError(
-            message !== null ? message : buildMessage(expected, found),
+            message !== null ? message : buildMessage(expected!, found),
             expected,
             found,
             pos,

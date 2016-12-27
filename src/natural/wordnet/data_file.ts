@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { WordnetData, Pointer } from './wordnet_types';
+import { WordnetData, Pointer, Pos } from './wordnet_types';
 import WordNetFile = require('./wordnet_file');
 import fs = require('fs');
 
@@ -49,7 +49,7 @@ class DataFile extends WordNetFile {
                     ptrs.push({
                         pointerSymbol: tokens[ptrOffset + 1 + i * 4],
                         synsetOffset: parseInt(tokens[ptrOffset + 2 + i * 4], 10),
-                        pos: tokens[ptrOffset + 3 + i * 4],
+                        pos: tokens[ptrOffset + 3 + i * 4] as Pos,
                         sourceTarget: tokens[ptrOffset + 4 + i * 4]
                     });
                 }
@@ -57,7 +57,7 @@ class DataFile extends WordNetFile {
                 // break "gloss" into definition vs. examples
                 var glossArray = data[1].split("; ");
                 var definition = glossArray[0];
-                var examples = glossArray.slice(1);    
+                var examples = glossArray.slice(1);
 
                 for (var k=0; k < examples.length; k++) {
                     examples[k] = examples[k].replace(/\"/g,'').replace(/\s\s+/g,'');

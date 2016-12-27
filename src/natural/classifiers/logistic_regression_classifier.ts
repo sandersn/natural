@@ -38,13 +38,16 @@ class LogisticRegressionClassifier extends Classifier {
         return classifier;
     }
 
-    static load(filename: string, stemmer: Stemmer, callback: (err: NodeJS.ErrnoException, classifier?: Classifier | null) => void) {
+    static load(filename: string, stemmer: Stemmer, callback?: (err: NodeJS.ErrnoException, classifier?: Classifier | null) => void) {
         Classifier.load(filename, function(err, classifier) {
-            if (err) {
-                callback(err);
-            }
-            else {
-                callback(err, LogisticRegressionClassifier.restore(classifier, stemmer));
+            if (callback) {
+                // Note: Classifier.load may not pass stemmer, but in this case, LogisticRegressionClassifier does not load
+                if (err) {
+                    callback(err);
+                }
+                else {
+                    callback(err, LogisticRegressionClassifier.restore(classifier, stemmer));
+                }
             }
         });
     }

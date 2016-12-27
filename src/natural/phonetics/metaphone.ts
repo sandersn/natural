@@ -158,7 +158,6 @@ interface Metaphone extends Phonetic {
     dropVowels(token: string): string;
 }
 
-export = Metaphone;
 function process(token: string, maxLength = 32) {
     token = token.toLowerCase();
     token = dedup(token);
@@ -191,6 +190,7 @@ function process(token: string, maxLength = 32) {
 }
 
 var Metaphone: Metaphone = createPhonetic(process) as Metaphone;
+export = Metaphone;
 
 // expose functions for testing    
 Metaphone.dedup = dedup;

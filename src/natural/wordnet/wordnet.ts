@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { WordnetData, Pointer } from './wordnet_types';
+import { WordnetData, Pointer, Pos } from './wordnet_types';
 import IndexFile = require('./index_file');
 import DataFile = require('./data_file');
 
@@ -60,7 +60,7 @@ class WordNet {
         if(offsets.length == 0) {
             callback(results);
         } else {
-            data.get(offsets.pop(), record => {
+            data.get(offsets.pop()!, record => {
                 results.push(record);
                 this.pushResults(data, results, offsets, callback);
             });
@@ -71,7 +71,7 @@ class WordNet {
         if(files.length == 0)
             callback(results);
         else {
-            var file = files.pop();
+            var file = files.pop()!;
 
             file.index.lookup(word, record => {
                 if(record) {
@@ -96,11 +96,11 @@ class WordNet {
         ], [], word, callback);
     }
 
-    get(synsetOffset: number, pos: string, callback: (data: WordnetData) => void) {
+    get(synsetOffset: number, pos: Pos, callback: (data: WordnetData) => void) {
         this.getDataFile(pos).get(synsetOffset, callback);
     }
 
-    getDataFile(pos: string) {
+    getDataFile(pos: Pos) {
         switch(pos) {
         case 'n':
             return this.nounData;
@@ -115,7 +115,7 @@ class WordNet {
 
     loadSynonyms(synonyms: WordnetData[], results: WordnetData[], ptrs: Pointer[], callback: (synonyms: WordnetData[]) => void) {
         if(ptrs.length > 0) {
-            var ptr = ptrs.pop();
+            var ptr = ptrs.pop()!;
 
             this.get(ptr.synsetOffset, ptr.pos, synonym => {
                 synonyms.push(synonym);
@@ -128,7 +128,7 @@ class WordNet {
 
     loadResultSynonyms(synonyms: WordnetData[], results: WordnetData[], callback: (synonyms: WordnetData[]) => void) {
         if(results.length > 0) {
-            var result = results.pop();
+            var result = results.pop()!;
             this.loadSynonyms(synonyms, results, result.ptrs, callback);
         } else
             callback(synonyms);

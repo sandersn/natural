@@ -95,7 +95,7 @@ class Trie {
             return get(node.dictionary[word[0]], word.substring(1));
         }
 
-        function recurse(node: Trie, stringAgg: string, resultsAgg: string[]): void {
+        function recurse(node: Trie | null, stringAgg: string, resultsAgg: string[]): void {
             if (!node) return;
 
             // Check if this is a word
@@ -188,7 +188,7 @@ class Trie {
             search = search.toLowerCase();
         }
         
-        function recurse(node: Trie, search: string, stringAgg: string, lastWord: string): [string, string] {
+        function recurse(node: Trie, search: string, stringAgg: string, lastWord: string | null): [string | null, string] {
             // Check if this is a word
             if(node.$) {
                 lastWord = stringAgg;
@@ -215,7 +215,7 @@ class Trie {
      * Note: This involves traversing the entire structure and may not be
      * good for frequent use.
      **/
-    getSize() { 
+    getSize() {
 	var total = 1;
 	for(var c in this.dictionary) {
 	    total += this.dictionary[c].getSize();

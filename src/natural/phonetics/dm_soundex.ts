@@ -80,7 +80,7 @@ THE SOFTWARE.
  */
 type State = {
     0?: number[],
-    [s: string]: (number | number[])[] | State
+    [s: string]: (number | number[])[] | State | undefined
 };
 var codes: State = {
     A: {
@@ -227,7 +227,7 @@ function findRules(str: string) {
 
     return {
         length: charsInvolved,
-        mapping: legalState[0]
+        mapping: legalState[0] as number[]
     };
 }
 

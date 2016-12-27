@@ -20,7 +20,7 @@ import log4js = require('log4js');
 var logger = log4js.getLogger();
 logger.setLevel('WARN');
 
-var predicates: { [s: string]: (sentence: [string, string][], i: number, parameter_1: string, parameter_2: string) => boolean } = {
+var predicates: { [s: string]: (sentence: [string, string][], i: number, parameter_1: string, parameter_2: string) => boolean | undefined } = {
     // Predicates as used in the English rules in data/English/tr_from_posjs.txt
     "NEXT-TAG": next_tag_is,
     "NEXT-WORD-IS-CAP": next_word_is_cap,
@@ -392,7 +392,7 @@ class Predicate {
     name: string;
     parameter1: string;
     parameter2: string;
-    function: (tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) => boolean;
+    function: (tagged_sentence: [string, string][], i: number, parameter1: string, parameter2: string) => boolean | undefined;
     predicate: (tagged_sentence: [string, string][], i: number, parameter1: string) => boolean;
     constructor(name: string, parameter1: string, parameter2?: string) {
         this.name = name;

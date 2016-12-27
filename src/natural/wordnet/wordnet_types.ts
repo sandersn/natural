@@ -15,7 +15,7 @@ export type WordnetData = {
 export type Pointer = {
     pointerSymbol: string;
     synsetOffset: number;
-    pos: string;
+    pos: Pos;
     sourceTarget: string;
 }
 
@@ -29,6 +29,7 @@ type MissResult = {
     status: 'miss';
 }
 export type FindResult = HitResult | MissResult;
+
 export type IndexRecord = {
     lemma: string;
     pos: string;
@@ -37,3 +38,5 @@ export type IndexRecord = {
     tagsenseCnt: number;
     synsetOffset: number[];
 }
+
+export type Pos = 'n' | 'v' | 'a' | 's' | 'r';

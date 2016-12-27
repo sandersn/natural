@@ -59,7 +59,7 @@ class IndexFile extends WordNetFile {
         super(dataDir, 'index.' + name);
     }
 
-    private findAt(fd: number, size: number, pos: number, lastPos: number, adjustment: number, searchKey: string, callback: (result: FindResult) => void, lastKey?: string) {
+    private findAt(fd: number, size: number, pos: number, lastPos: number | null, adjustment: number, searchKey: string, callback: (result: FindResult) => void, lastKey?: string) {
         if (lastPos == pos || pos >= size) {
             miss(callback);
         } else {
@@ -98,7 +98,7 @@ class IndexFile extends WordNetFile {
         });
     }
 
-    lookup(word: string, callback: (record: IndexRecord) => void) {
+    lookup(word: string, callback: (record: IndexRecord | null) => void) {
         this.find(word, function(record) {
             var indexRecord = null;
 
@@ -120,6 +120,7 @@ class IndexFile extends WordNetFile {
                     synsetOffset:  offsets
                 };
             }
+            indexRecord;
 
             callback(indexRecord);
         });

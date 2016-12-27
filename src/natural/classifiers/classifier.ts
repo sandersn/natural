@@ -101,8 +101,8 @@ class Classifier {
         }
 
         // Remove if there's a match
-        if (!isNaN(pos)) {
-            this.docs.splice(pos, 1);
+        if (!isNaN(pos as number)) {
+            this.docs.splice(pos as number, 1);
 
             for (var i = 0, ii = text.length; i < ii; i++) {
                 delete this.features[text[i]];
@@ -168,7 +168,7 @@ class Classifier {
         return classifier;
     }
 
-    static load(filename: string, stemmerOrCallback: Stemmer | ((err: NodeJS.ErrnoException, classifier: Classifier) => void), optionalCallback?: (err: NodeJS.ErrnoException, classifier: {}) => void) {
+    static load(filename: string, stemmerOrCallback: Stemmer | ((err: NodeJS.ErrnoException, classifier: Classifier) => void), optionalCallback?: (err: NodeJS.ErrnoException, classifier: Classifier) => void) {
         const callback = optionalCallback ? optionalCallback : stemmerOrCallback as ((err: NodeJS.ErrnoException, classifier: Classifier) => void);
         fs.readFile(filename, "utf8", function(err, data) {
             const classifier = err ? undefined : JSON.parse(data);

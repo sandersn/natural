@@ -3,7 +3,8 @@
         "allowJs": true,
         "outDir": "build",
         "noImplicitAny": true,
-        "noImplicitThis": true
+        "noImplicitThis": true,
+        "strictNullChecks": true
     },
     "include": ["src/natural/**/*"],
     "exclude": ["lib", "node_modules"]

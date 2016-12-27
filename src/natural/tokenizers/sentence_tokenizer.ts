@@ -26,6 +26,7 @@ class SentenceTokenizer extends Tokenizer {
     tokenize(text: string) {
         // break string up in to sentences based on punctation and quotation marks
         var tokens = text.match(/([\"\'\‘\“\'\"\[\(\{\⟨][^\.\?\!]+[\.\?\!][\"\'\’\”\'\"\]\)\}\⟩]|[^\.\?\!]+[\.\?\!])\s?/g);
+        if (!tokens) return [];
 
         // remove unecessary white space
         tokens = tokens.map(Function.prototype.call, String.prototype.trim);

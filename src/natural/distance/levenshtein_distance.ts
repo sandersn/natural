@@ -35,9 +35,9 @@ interface LevenshteinOptions {
  */
 function LevenshteinDistance (source: string, target: string, options: LevenshteinOptions) {
     options = options || {};
-    if(isNaN(options.insertion_cost)) options.insertion_cost = 1;
-    if(isNaN(options.deletion_cost)) options.deletion_cost = 1;
-    if(isNaN(options.substitution_cost)) options.substitution_cost = 1;
+    if(isNaN(options.insertion_cost!)) options.insertion_cost = 1;
+    if(isNaN(options.deletion_cost!)) options.deletion_cost = 1;
+    if(isNaN(options.substitution_cost!)) options.substitution_cost = 1;
 
     var sourceLength = source.length;
     var targetLength = target.length;

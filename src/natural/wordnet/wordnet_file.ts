@@ -35,7 +35,7 @@ class WordNetFile {
     open(callback: (err: NodeJS.ErrnoException, fd: number, k: () => void) => void) {
         var filePath = this.filePath;
 
-        fs.open(filePath, 'r', null, function(err, fd) {
+        fs.open(filePath, 'r', function(err, fd) {
             if (err) {
                 console.log('Unable to open %s', filePath);
                 return;

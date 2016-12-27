@@ -48,11 +48,13 @@ class Lexicon {
         // Split into an array of non-empty lines
         var arrayOfLines = data.match(/[^\r\n]+/g);
         this.lexicon = {};
-        for (const line of arrayOfLines) {
-            // Split line by whitespace
-            var elements = line.trim().split(/\s+/);
-            if (elements.length > 0) {
-                this.lexicon[elements[0]] = elements.slice(1);
+        if (arrayOfLines) {
+            for (const line of arrayOfLines) {
+                // Split line by whitespace
+                var elements = line.trim().split(/\s+/);
+                if (elements.length > 0) {
+                    this.lexicon[elements[0]] = elements.slice(1);
+                }
             }
         }
     };

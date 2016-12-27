@@ -43,29 +43,29 @@ function distance(s1: string, s2: string) {
 
     // find matches
     for (var i = 0; i < s1.length; i++) {
-	var matched = false;
+        var matched = false;
 
-	// check for an exact match
-	if (s1[i] ==  s2[i]) {
-		matches1[i] = matches2[i] = matched = true;
-		m++
-	}
+        // check for an exact match
+        if (s1[i] ==  s2[i]) {
+            matches1[i] = matches2[i] = matched = true;
+            m++
+        }
 
-	// check the "match window"
-	else {
-        	// this for loop is a little brutal
-        	for (k = (i <= matchWindow) ? 0 : i - matchWindow;
-        		(k <= i + matchWindow) && k < s2.length && !matched;
-			k++) {
-            		if (s1[i] == s2[k]) {
-                		if(!matches1[i] && !matches2[k]) {
-                	    		m++;
-               		}
+        // check the "match window"
+        else {
+            // this for loop is a little brutal
+            for (k = (i <= matchWindow) ? 0 : i - matchWindow;
+                 (k <= i + matchWindow) && k < s2.length && !matched;
+                 k++) {
+                if (s1[i] == s2[k]) {
+                    if(!matches1[i] && !matches2[k]) {
+                        m++;
+                    }
 
-        	        matches1[i] = matches2[k] = matched = true;
-        	    }
-        	}
-	}
+                    matches1[i] = matches2[k] = matched = true;
+                }
+            }
+        }
     }
 
     if(m == 0)
@@ -75,15 +75,15 @@ function distance(s1: string, s2: string) {
     var k = 0;
 
     for(var i = 0; i < s1.length; i++) {
-    	if(matches1[k]) {
-    	    while(!matches2[k] && k < matches2.length)
+        if(matches1[k]) {
+            while(!matches2[k] && k < matches2.length)
                 k++;
-	        if(s1[i] != s2[k] &&  k < matches2.length)  {
+            if(s1[i] != s2[k] &&  k < matches2.length)  {
                 t++;
             }
 
-    	    k++;
-    	}
+            k++;
+        }
     }
     
     // debug helpers:
@@ -103,8 +103,7 @@ function JaroWinklerDistance(s1: string, s2: string, dj?: number) {
         return 1;
     }
     else {
-        var jaro;
-        (typeof(dj) == 'undefined')? jaro = distance(s1,s2) : jaro = dj;
+        var jaro = typeof dj == 'undefined' ? distance(s1,s2) : dj;
         var p = 0.1; //
         var l = 0 // length of the matching prefix
         while(s1[l] == s2[l] && l < 4)

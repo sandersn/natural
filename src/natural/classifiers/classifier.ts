@@ -55,10 +55,9 @@ class Classifier {
     }
 
     addDocument(text: string | string[], classification: string | undefined) {
-        
         // Ignore further processing if classification is undefined 
         if(typeof classification === 'undefined') return;
-        
+
         // If classification is type of string then make sure it's dosen't have blank space at both end  
         if(typeof classification === 'string'){
             classification = classification.trim();
@@ -77,8 +76,7 @@ class Classifier {
             text: text
         });
 
-        for (var i = 0; i < text.length; i++) {
-            var token = text[i];
+        for (const token of text) {
             this.features[token] = (this.features[token] || 0) + 1;
         }
     }
@@ -104,8 +102,8 @@ class Classifier {
         if (!isNaN(pos as number)) {
             this.docs.splice(pos as number, 1);
 
-            for (var i = 0, ii = text.length; i < ii; i++) {
-                delete this.features[text[i]];
+            for (const t of text) {
+                delete this.features[t];
             }
         }
     }
@@ -117,10 +115,7 @@ class Classifier {
             observation = this.stemmer.tokenizeAndStem(observation);
 
         for(var feature in this.features) {
-            if(observation.indexOf(feature) > -1)
-                features.push(1);
-            else
-                features.push(0);
+            features.push(observation.indexOf(feature) > -1 ? 1 : 0);
         }
 
         return features;

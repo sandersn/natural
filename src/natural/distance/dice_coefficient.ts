@@ -34,9 +34,8 @@ function letterPairs(str: string) {
 function wordLetterPairs(str: string) {
     var allPairs = [];
     var words = str.split(/\s+/);
-    for (var i = 0; i < words.length; i++) {
-        const pairs = letterPairs(words[i]);
-        allPairs.push(...pairs);
+    for (const word of words) {
+        allPairs.push(...letterPairs(word));
     }
     return allPairs;
 };

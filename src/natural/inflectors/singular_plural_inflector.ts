@@ -108,13 +108,7 @@ class TenseInflector {
     izeRegExps(token: string, forms: [RegExp, string | ((sub: string, ...args: any[]) => string)][]) {
         for (const [pattern, replacement] of forms) {
             if (token.match(pattern)) {
-                if (typeof replacement === 'string') {
-                    return token.replace(pattern, replacement);
-                }
-                else
-                {
-                    return token.replace(pattern, replacement);
-                }
+                return token.replace(pattern, replacement as string);
             }
         }
 

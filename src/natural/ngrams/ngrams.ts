@@ -48,14 +48,14 @@ export function multrigrams(sequence: string | string[], n: number, startSymbol:
 
 function ngramsWorker(sequence: string | string[], n: number, startSymbol: string, endSymbol: string) {
     var result = [];
-    
+
     if (!_.isArray(sequence)) {
         sequence = tokenizer.tokenize(sequence);
     }
 
     var count = _.max([0, sequence.length - n + 1]);
 
-    // Check for left padding    
+    // Check for left padding
     if(typeof startSymbol !== "undefined" && startSymbol !== null) {
         // Create an array of (n) start symbols
         var blanks = [];
@@ -89,7 +89,7 @@ function ngramsWorker(sequence: string | string[], n: number, startSymbol: strin
             result.push(sequence.slice(sequence.length - p, sequence.length).concat(blanks.slice(0, n - p)));
         }
     }
-    
+
     return result;
 }
 

@@ -97,19 +97,14 @@ export class EdgeWeightedDigraph {
         var adj = this.adj;
         var list = new Bag<DirectedEdge>();
         for(var i in adj) {
-            adj[i].unpack().forEach(function(item) {
+            for (const item of adj[i].unpack()) {
                 list.add(item);
-            });
+            }
         }
         return list.unpack();
     };
 
     toString() {
-        var result = [];
-        var list = this.edges();
-        for (const edge of list) {
-            result.push(edge.toString());
-        }
-        return result.join('\n');
+        return this.edges().map(edge => edge.toString()).join('\n');
     };
 }

@@ -24,7 +24,7 @@ THE SOFTWARE.
  * The basis of the TRIE structure.
  **/
 class Trie {
-    dictionary: { [s: string]: any };
+    dictionary: { [s: string]: Trie };
     $: boolean;
     cs: boolean;
     constructor(caseSensitive = true) {
@@ -37,7 +37,7 @@ class Trie {
      * Add a single string to the TRIE, returns true if the word was already in the 
      * trie.
      **/
-    addString(string: string) {
+    addString(string: string): boolean {
         if(this.cs === false) {
             string = string.toLowerCase();
         }
@@ -65,8 +65,8 @@ class Trie {
      * Add multiple strings to the TRIE
      **/
     addStrings(list: string[]) {
-        for(var i in list) {
-            this.addString(list[i]);
+        for(const x of list) {
+            this.addString(x);
         }
     };
 

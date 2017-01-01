@@ -28,7 +28,7 @@ import { EdgeWeightedDigraph, DirectedEdge } from "./edge_weighted_digraph";
  */
 class Topological {
     isDag: boolean;
-    sorted: any[];
+    sorted: number[];
     constructor(g: EdgeWeightedDigraph) {
         this.isDag = true;
         this.sorted = topoSort(uniqueVertexs(g.edges()), g.edges());
@@ -65,19 +65,17 @@ function topoSort(vertexs: number[], edges: DirectedEdge[]) {
         if(visited[i]) return;
         visited[i] = true;
 
-        var outgoing = edges.filter(function(edge) {
-            return edge.to() === vertex;
-        });
+        var outgoing = edges.filter(edge => edge.to() === vertex);
 
         var preds: number[] = [];
         if(outgoing.length > 0) {
             preds = predecessors.concat(vertex);
         }
         var from;
-        outgoing.forEach(function(edge) {
+        for (const edge of outgoing) {
             from = edge.from();
             visit(from, vertexs.indexOf(from), preds);
-        });
+        }
 
         sorted[--cursor] = vertex;
     };

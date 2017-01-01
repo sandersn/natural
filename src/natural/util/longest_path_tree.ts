@@ -39,15 +39,14 @@ class LongestPathTree {
     start: number;
     top: Topological;
     constructor(digraph: EdgeWeightedDigraph, start: number) {
-        var _this = this;
         this.edgeTo = [];
         this.distTo = [];
         this.distTo[start] = 0.0;
         this.start = start;
         this.top = new Topological(digraph);
-        this.top.order().forEach(function(vertex){
-            _this.relaxVertex(digraph, vertex, _this);
-        });
+        for (const vertex of this.top.order()) {
+            relaxVertex(digraph, vertex, this);
+        }
     };
 
     relaxEdge(e: DirectedEdge) {
@@ -58,28 +57,6 @@ class LongestPathTree {
             distTo[w] = distTo[v] + e.weight;
             edgeTo[w] = e;
         }
-    };
-
-    /**
-     * relax a vertex v in the specified digraph g
-     * @param {EdgeWeightedDigraph} the apecified digraph
-     * @param {Vertex} v vertex to be relaxed
-     */
-    relaxVertex(digraph: EdgeWeightedDigraph, vertex: number, tree: LongestPathTree) {
-        var distTo = tree.distTo;
-        var edgeTo = tree.edgeTo;
-
-        digraph.getAdj(vertex).forEach(function(edge){
-            var w = edge.to();
-            distTo[w] = distTo[w] || 0.0;
-            distTo[vertex] = distTo[vertex] || 0.0;
-            if (distTo[w] < distTo[vertex] + edge.weight) {
-                // in case of the result of 0.28+0.34 is 0.62000001
-                distTo[w] = parseFloat((distTo[vertex] + edge.weight).toFixed(2));
-                edgeTo[w] = edge;
-            }
-        });
-
     };
 
     getDistTo(v: number) {
@@ -100,6 +77,28 @@ class LongestPathTree {
         path.push(this.start);
         return path.reverse();
     };
+}
+
+/**
+ * relax a vertex v in the specified digraph g
+ * @param the apecified digraph
+ * @param v vertex to be relaxed
+ */
+function relaxVertex(digraph: EdgeWeightedDigraph, vertex: number, tree: LongestPathTree) {
+    var distTo = tree.distTo;
+    var edgeTo = tree.edgeTo;
+
+    for (const edge of digraph.getAdj(vertex)) {
+        var w = edge.to();
+        distTo[w] = distTo[w] || 0.0;
+        distTo[vertex] = distTo[vertex] || 0.0;
+        if (distTo[w] < distTo[vertex] + edge.weight) {
+            // in case of the result of 0.28+0.34 is 0.62000001
+            distTo[w] = parseFloat((distTo[vertex] + edge.weight).toFixed(2));
+            edgeTo[w] = edge;
+        }
+    }
+
 }
 
 export = LongestPathTree;

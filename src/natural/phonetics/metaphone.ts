@@ -95,7 +95,7 @@ function transformS(token: string) {
 function transformT(token: string) {
     token = token.replace(/t(ia|io)/g, 'x$1');
     token = token.replace(/th/, '0');
-    
+
     return token;
 }
 
@@ -172,7 +172,7 @@ function process(token: string, maxLength = 32) {
     token = transformPH(token);
     token = transformQ(token);
     token = transformS(token);
-    token = transformX(token);    
+    token = transformX(token);
     token = transformT(token);
     token = dropT(token);
     token = transformV(token);
@@ -181,10 +181,10 @@ function process(token: string, maxLength = 32) {
     token = dropY(token);
     token = transformZ(token);
     token = dropVowels(token);
-    
+
     token.toUpperCase();
     if(token.length >= maxLength)
-        token = token.substring(0, maxLength);        
+        token = token.substring(0, maxLength);
 
     return token.toUpperCase();
 }

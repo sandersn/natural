@@ -65,7 +65,7 @@ export class RegexpTokenizer extends Tokenizer {
  *
  *      >>> WordTokenizer().tokenize("She said 'hello'.")
  *      ['She', 'said', 'hello']
- * 
+ *
  */
 export class WordTokenizer extends RegexpTokenizer {
     constructor(options?: RegexpOptions) {
@@ -80,7 +80,7 @@ export class WordTokenizer extends RegexpTokenizer {
  *
  *      >>> WordPunctTokenizer().tokenize("She said 'hello'.")
  *      ["She","said","'","hello","'","."]
- * 
+ *
  */
 export class WordPunctTokenizer extends RegexpTokenizer {
     constructor(options: RegexpOptions) {

@@ -27,23 +27,21 @@ export = PorterStemmer;
 
 
 function isVowel(letter: string){
-	return (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u' || letter == 'á' || letter == 'é' ||
-			letter == 'í' || letter == 'ó' || letter == 'ú');
-};
+    return (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u' || letter == 'á' || letter == 'é' ||
+            letter == 'í' || letter == 'ó' || letter == 'ú');
+}
 
-function getNextVowelPos(token: string, start: number){
-	length=token.length
-			for (var i = start; i < length; i++)
-				if (isVowel(token[i])) return i;
-			return length;
-};
+function getNextVowelPos(token: string, start: number) {
+    for (var i = start; i < token.length; i++)
+        if (isVowel(token[i])) return i;
+    return token.length;
+}
 
 function getNextConsonantPos(token: string, start: number){
-	length=token.length
-			for (var i = start; i < length; i++)
-				if (!isVowel(token[i])) return i;
-			return length;
-};
+    for (var i = start; i < token.length; i++)
+        if (!isVowel(token[i])) return i;
+    return token.length;
+}
 
 
 function endsin(token: string, suffix: string) {

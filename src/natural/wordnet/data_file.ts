@@ -34,10 +34,11 @@ class DataFile extends WordNetFile {
         this.open(function(err, fd, done) {
             WordNetFile.appendLineChar(fd, location, 0, buff, function(line) {
                 done();
-                var data = line.split('| ');
-                var tokens = data[0].split(/\s+/);
-                var ptrs: Pointer[] = [];
-                var wCnt = parseInt(tokens[3], 16);
+                var [tokenLine, gloss] = line.split('| ');
+                var tokens = tokenLine.split(/\s+/);
+                var [synsetOffset, lexFilenum, pos, wCntStr, lemma, lexId] = tokens;
+                var wCnt = parseInt(wCntStr, 16);
+                var ptrs = [];
                 var synonyms = [];
 
                 for(var i = 0; i < wCnt; i++) {
@@ -55,24 +56,21 @@ class DataFile extends WordNetFile {
                 }
 
                 // break "gloss" into definition vs. examples
-                var glossArray = data[1].split("; ");
-                var definition = glossArray[0];
-                var examples = glossArray.slice(1);
+                var [definition, ...examples] = gloss.split("; ");
 
                 for (var k=0; k < examples.length; k++) {
                     examples[k] = examples[k].replace(/\"/g,'').replace(/\s\s+/g,'');
                 }
-
                 callback({
-                    synsetOffset: parseInt(tokens[0], 10),
-                    lexFilenum: parseInt(tokens[1], 10),
-                    pos: tokens[2],
-                    wCnt: wCnt,
-                    lemma: tokens[4],
-                    synonyms: synonyms,
-                    lexId: tokens[5],
-                    ptrs: ptrs,
-                    gloss: data[1],
+                    synsetOffset: parseInt(synsetOffset, 10),
+                    lexFilenum: parseInt(lexFilenum, 10),
+                    pos,
+                    wCnt,
+                    lemma,
+                    synonyms,
+                    lexId,
+                    ptrs,
+                    gloss,
                     def: definition,
                     exp: examples
                 });

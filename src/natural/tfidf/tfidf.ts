@@ -32,7 +32,7 @@ type Document = {
 };
 
 function buildDocument(text: string | string[] | Document, key: number) {
-    var stopOut: boolean;
+    var stopOut;
 
     if(typeof text === 'string') {
         text = tokenizer.tokenize(text.toLowerCase());
@@ -41,14 +41,13 @@ function buildDocument(text: string | string[] | Document, key: number) {
         stopOut = false;
         return text;
     }
-
-    return text.reduce(function (document: Document, term: string) {
-        // next line solves https://github.com/NaturalNode/natural/issues/119
-        if(typeof document[term] === 'function') document[term] = 0;
+    var document = Object.create(null) as Document;
+    document.__key = key;
+    for (const term of text) {
         if(!stopOut || stopwords.indexOf(term) < 0)
             document[term] = (document[term] ? document[term] + 1 : 1);
-        return document;
-    }, {__key: key});
+    }
+    return document;
 }
 
 function documentHasTerm(term: string, document: Document) {
@@ -57,14 +56,14 @@ function documentHasTerm(term: string, document: Document) {
 
 class TfIdf {
     documents: Document[];
-    _idfCache: { [s: string]: any };
+    _idfCache: { [s: string]: number };
     constructor(deserialized: TfIdf) {
         if(deserialized)
             this.documents = deserialized.documents;
         else
             this.documents = [];
 
-        this._idfCache = {};
+        this._idfCache = Object.create(null);
     }
 
     static tf(term: string, document: Document) {
@@ -75,7 +74,7 @@ class TfIdf {
 
         // Lookup the term in the New term-IDF caching,
         // this will cut search times down exponentially on large document sets.
-        if(this._idfCache[term] && this._idfCache.hasOwnProperty(term) && force !== true)
+        if(this._idfCache[term] && force !== true)
             return this._idfCache[term];
 
         var docsWithTerm = this.documents.reduce(function(count, document) {
@@ -103,7 +102,7 @@ class TfIdf {
                 this.idf(term, true);
             }
         }   else {
-            this._idfCache = {};
+            this._idfCache = Object.create(null);
         }
     };
 
@@ -128,20 +127,18 @@ class TfIdf {
             }
         }
         else {
-            this._idfCache = {};
+            this._idfCache = Object.create(null);
         }
     };
 
     tfidf(terms: string | string[], d: number) {
-        var _this = this;
-
         if(!_.isArray(terms))
             terms = tokenizer.tokenize(terms.toString().toLowerCase());
 
-        return terms.reduce(function(value, term) {
-            var idf = _this.idf(term);
+        return terms.reduce((value, term) => {
+            var idf = this.idf(term);
             idf = idf === Infinity ? 0 : idf;
-            return value + (TfIdf.tf(term, _this.documents[d]) * idf);
+            return value + (TfIdf.tf(term, this.documents[d]) * idf);
         }, 0.0);
     };
 
@@ -153,7 +150,7 @@ class TfIdf {
                 terms.push({term: term, tfidf: this.tfidf(term, d)});
         }
 
-        return terms.sort(function(x, y) { return y.tfidf - x.tfidf; });
+        return terms.sort((x, y) => y.tfidf - x.tfidf);
     };
 
     tfidfs(terms: string | string[], callback: (i: number, x: number, key: number) => void) {

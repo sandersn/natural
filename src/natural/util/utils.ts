@@ -54,13 +54,7 @@ export function replacer(translationTable: Map<string>): (s: string) => string {
      */
     let regExp = new RegExp(pattern.join('|'), 'g');
 
-    /**
-     * @param {string} str Input string.
-     * @return {string} The string replaced.
-     */
-    return function(str: string): string {
-        return str.replace(regExp, str => translationTable[str]);
-    };
+    return str => str.replace(regExp, str => translationTable[str]);
 }
 
 

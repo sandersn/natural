@@ -68,7 +68,7 @@ class IndexFile extends WordNetFile {
                 var key = tokens[0];
 
                 if(key == searchKey) {
-                    callback({status: 'hit', key: key, 'line': line, tokens: tokens});
+                    callback({status: 'hit', key, 'line': line, tokens});
                 } else if(adjustment == 1 || key == lastKey)  {
                     miss(callback);
                 } else {
@@ -104,24 +104,22 @@ class IndexFile extends WordNetFile {
 
             if(record.status == 'hit') {
                 var ptrs = [], offsets = [];
-
-                for(var i = 0; i < parseInt(record.tokens[3]); i++)
+                var [lemma, pos, offsetStr, ptrStr] = record.tokens;
+                for(var i = 0; i < parseInt(ptrStr); i++)
                     ptrs.push(record.tokens[i]);
 
-                for(var i = 0; i < parseInt(record.tokens[2]); i++)
+                for(var i = 0; i < parseInt(offsetStr); i++)
                     offsets.push(parseInt(record.tokens[ptrs.length + 6 + i], 10));
 
                 indexRecord = {
-                    lemma: record.tokens[0],
-                    pos: record.tokens[1],
+                    lemma,
+                    pos,
                     ptrSymbol: ptrs,
                     senseCnt:  parseInt(record.tokens[ptrs.length + 4], 10),
                     tagsenseCnt:  parseInt(record.tokens[ptrs.length + 5], 10),
                     synsetOffset:  offsets
                 };
             }
-            indexRecord;
-
             callback(indexRecord);
         });
     }
